@@ -27,6 +27,22 @@ Then open http://localhost:8000 and use your browser's device toolbar at 390 × 
 **Your data stays on the device** you use Tippy on (the browser's localStorage). Use one phone
 or tablet for the bar; clearing the browser's website data deletes it.
 
+## Put it on your phone
+
+**Link:** https://jacques-van-rensburg-webdev.github.io/tippy/
+
+- **iPhone (Safari):** open the link → tap **Share** → **Add to Home Screen** → **Add**. Open Tippy from the home-screen icon.
+- **Android (Chrome):** open the link → tap **⋮** → **Install app** (or **Add to Home screen**).
+
+It opens full screen on Today and works offline. When the phone is online, it picks up a new
+version the next time it opens.
+
+**Your data:** saved on that phone only, in the home-screen app (on iPhone it's separate from
+Safari tabs, so use the icon). Nothing is sent anywhere: the link only serves the app's code.
+There's no backup yet; deleting the app or clearing website data deletes the logs.
+
+When adding a file to the app, also add it to `APP_FILES` in `sw.js`.
+
 ## Tests
 
 ```
@@ -51,6 +67,8 @@ Runs the split, money and date tests with Node's built-in test runner (no packag
 
 ```
 index.html                 the page: header (safe area), window column, taskbar, dialog, toast
+manifest.webmanifest       home-screen install: name, icons, opens on Today
+sw.js                      offline: app files network first, the font saved
 css/tokens.css             every value: the reference's colours, sizes, spacing and text sizes
 css/styles.css             reset, shell, grid, grid overlay
 css/win95.css              windows, title bars, buttons, fields, lists, tree, taskbar, overlay
@@ -65,6 +83,7 @@ js/money.js, js/dates.js   cents ↔ "42,45"; dates, times, ISO week numbers
 js/views/                  today, payout, week, staff, log-dialog
 js/pdf/                    the payout PDF (made in the app, no library) and sharing it
 js/grid-overlay.js         G-key grid overlay
+assets/images/             icon.svg (+ maskable source) and the PNG icons
 tests/                     node --test suites
 docs/design/               the reference design
 ```

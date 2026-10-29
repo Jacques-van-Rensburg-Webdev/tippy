@@ -59,3 +59,8 @@ ui.tab = tabFromHash();
 initActions({ go, render });
 render();
 initGridOverlay();
+
+// Offline and home-screen install (sw.js). Browsers only allow it on https or localhost.
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}

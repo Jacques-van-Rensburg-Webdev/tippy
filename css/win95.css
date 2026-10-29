@@ -161,7 +161,9 @@ select.input { padding: 0 var(--gap-6); }
   margin: 0;
   padding: var(--gap-4) var(--gap-10) var(--gap-10);
   border: var(--line) solid var(--shadow);
-  box-shadow: var(--line) var(--line) 0 var(--white), inset var(--line) var(--line) 0 var(--white);
+  /* The white edge sits outside the border (right and bottom) only: an inner white line would
+     run through the label, since the label's gap only cuts the border, not a shadow. */
+  box-shadow: var(--line) var(--line) 0 var(--white);
 }
 .group > legend { padding: 0 var(--gap-4); }
 

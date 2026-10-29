@@ -1,0 +1,228 @@
+/* ---------- Reset ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--font-family);
+  font-size: var(--text-base);
+  line-height: var(--leading-base);
+  color: var(--color-text);
+  background: var(--color-surface);
+}
+img, svg { display: block; max-width: 100%; }
+button, input, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+
+/* ---------- App shell (zones) ---------- */
+/* On desktop the app is centred at phone width so it matches the frame. */
+.app {
+  position: relative;
+  max-width: var(--frame-width);
+  min-height: 100dvh;
+  margin-inline: auto;
+  background: var(--color-bg);
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding-top: var(--safe-top);
+  background: var(--color-bg);
+  box-shadow: inset 0 -1px 0 var(--color-border);
+}
+.app-header-inner {
+  height: var(--zone-header);
+  padding-inline: var(--grid-margin);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-1);
+}
+.app-title {
+  font-size: var(--text-lg);
+  line-height: var(--leading-lg);
+  font-weight: var(--weight-bold);
+}
+
+.app-content {
+  flex: 1;
+  padding-block: var(--space-3);
+}
+
+.app-tabbar {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  padding-bottom: var(--safe-bottom);
+  background: var(--color-bg);
+  box-shadow: inset 0 1px 0 var(--color-border);
+}
+.app-tabbar-inner {
+  height: var(--zone-tabbar);
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+}
+.tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-0-5);
+  min-height: var(--size-tap);
+  font-size: var(--text-xs);
+  line-height: var(--leading-xs);
+  color: var(--color-text-muted);
+  text-decoration: none;
+}
+.tab[aria-current="page"] { color: var(--color-primary); }
+.tab-icon { width: var(--size-icon); height: var(--size-icon); }
+
+/* ---------- 4-column grid ---------- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-columns), minmax(0, 1fr));
+  column-gap: var(--grid-gutter);
+  row-gap: var(--space-2);
+  padding-inline: var(--grid-margin);
+}
+.span-1 { grid-column: span 1; }
+.span-2 { grid-column: span 2; }
+.span-3 { grid-column: span 3; }
+.span-4 { grid-column: 1 / -1; }
+.start-1 { grid-column-start: 1; }
+.start-2 { grid-column-start: 2; }
+.start-3 { grid-column-start: 3; }
+.start-4 { grid-column-start: 4; }
+.full-bleed { grid-column: 1 / -1; margin-inline: calc(var(--grid-margin) * -1); }
+
+/* Vertical spacing helpers (8pt scale) */
+.mt-1 { margin-top: var(--space-1); }
+.mt-2 { margin-top: var(--space-2); }
+.mt-3 { margin-top: var(--space-3); }
+.mt-4 { margin-top: var(--space-4); }
+.mt-6 { margin-top: var(--space-6); }
+.stack-1 { display: flex; flex-direction: column; gap: var(--space-1); }
+.stack-2 { display: flex; flex-direction: column; gap: var(--space-2); }
+
+/* ---------- Typography ---------- */
+.text-xs   { font-size: var(--text-xs);   line-height: var(--leading-xs); }
+.text-sm   { font-size: var(--text-sm);   line-height: var(--leading-sm); }
+.text-base { font-size: var(--text-base); line-height: var(--leading-base); }
+.text-lg   { font-size: var(--text-lg);   line-height: var(--leading-lg); }
+.text-xl   { font-size: var(--text-xl);   line-height: var(--leading-xl); }
+.text-muted { color: var(--color-text-muted); }
+.text-bold  { font-weight: var(--weight-bold); }
+
+/* ---------- Components ---------- */
+.card {
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  padding: var(--space-2);
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  height: var(--size-button);
+  padding-inline: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  font-weight: var(--weight-bold);
+}
+.button-primary {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-on-primary);
+}
+.button-sm { height: var(--size-button-sm); padding-inline: var(--space-2); }
+.button-block { width: 100%; }
+
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--size-tap);
+  height: var(--size-tap);
+  border: none;
+  background: none;
+  border-radius: var(--radius-full);
+}
+
+.input {
+  width: 100%;
+  height: var(--size-input);
+  padding-inline: var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+}
+
+/* ---------- Grid overlay (press G or add ?grid to the URL) ---------- */
+.grid-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  pointer-events: none;
+  display: none;
+}
+.grid-overlay.is-visible { display: block; }
+.grid-overlay-frame {
+  position: relative;
+  max-width: var(--frame-width);
+  height: 100%;
+  margin-inline: auto;
+}
+.grid-overlay-columns {
+  position: absolute;
+  inset: 0;
+  padding-inline: var(--grid-margin);
+  display: grid;
+  grid-template-columns: repeat(var(--grid-columns), minmax(0, 1fr));
+  column-gap: var(--grid-gutter);
+}
+.grid-overlay-columns > div {
+  background: var(--overlay-column);
+  display: flex;
+  justify-content: center;
+  padding-top: calc(var(--overlay-numbers-top, 0px) + var(--space-1));
+  font-size: var(--text-xs);
+  line-height: var(--leading-xs);
+  font-weight: var(--weight-bold);
+  color: var(--overlay-text);
+}
+.grid-overlay-rows {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(to bottom, var(--overlay-line) 1px, transparent 1px);
+  background-size: 100% var(--space-1);
+  opacity: 0.25;
+}
+.grid-overlay-zone {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-bottom: 1px dashed var(--overlay-line);
+}
+.grid-overlay-label {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  padding-inline: var(--space-0-5);
+  background: var(--color-bg);
+  border-radius: 0 var(--radius-sm) 0 0;
+  font-size: var(--text-xs);
+  line-height: var(--leading-xs);
+  color: var(--overlay-text);
+}
+.grid-overlay-zone.is-bottom .grid-overlay-label {
+  top: auto;
+  bottom: 100%;
+  border-radius: 0 var(--radius-sm) 0 0;
+}

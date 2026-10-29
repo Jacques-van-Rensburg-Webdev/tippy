@@ -1,0 +1,772 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Trinkgeld Split</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,600;9..40,700&display=swap">
+<style>
+/* Layout: one phone-width column of Windows 95 style windows on a teal desktop, taskbar fixed at the bottom. Single deliberate look in both themes. */
+:root {
+  --desk: #0F3D45;
+  --face: #E9DFCF;
+  --hi: #FFFFFF;
+  --hi2: #F7F1E6;
+  --shadow: #8C8270;
+  --ink: #1B1B1B;
+  --paper: #FBF6EE;
+  --red: #C9302C;
+  --red-dk: #8E1B18;
+  --red-xdk: #5E1210;
+  --red-lt: #F08A85;
+  --green: #2E9E4F;
+  --green-ink: #1E6B35;
+  --yellow: #F6B70F;
+  --info: #FCE7A6;
+  --blue: #2C7FB8;
+  --muted: #4A443B;
+  --warn: #8A4B00;
+  --sel: #0F3D45;
+  --font: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color-scheme: light;
+}
+html, body { height: 100%; }
+body { margin: 0; }
+body { background: var(--desk); color: var(--ink); font-family: var(--font); font-size: 15px; line-height: 1.35; }
+* { box-sizing: border-box; }
+button, input, select { font: inherit; color: inherit; }
+:focus-visible { outline: 1px dotted var(--ink); outline-offset: -5px; }
+.btn.primary:focus-visible { outline-color: #fff; }
+
+.shell { max-width: 480px; margin: 0 auto; padding-top: 16px; padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 14px; }
+
+.win { background: var(--face); border: 2px solid; border-color: var(--hi) var(--ink) var(--ink) var(--hi); box-shadow: inset -1px -1px 0 var(--shadow), inset 1px 1px 0 var(--hi2); padding: 3px; display: flex; flex-direction: column; min-width: 0; }
+.title { background: linear-gradient(90deg, var(--red), var(--red-dk)); color: #fff; min-height: 30px; display: flex; align-items: center; gap: 8px; padding: 0 4px 0 8px; font-weight: 700; font-size: 15px; }
+.title.grey { background: var(--shadow); color: var(--paper); }
+.title .grow { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tbtn { width: 26px; height: 24px; display: inline-flex; align-items: center; justify-content: center; background: var(--face); color: var(--ink); border: 2px solid; border-color: var(--hi) var(--ink) var(--ink) var(--hi); font-weight: 700; font-size: 13px; padding: 0; cursor: pointer; }
+.body { padding: 12px 10px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.row { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.between { justify-content: space-between; }
+.grow { flex: 1; min-width: 0; }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
+.xs { font-size: 12px; }
+.num { font-variant-numeric: tabular-nums; }
+.b { font-weight: 700; }
+
+.sunken { background: #fff; border: 2px solid; border-color: var(--shadow) var(--hi) var(--hi) var(--shadow); box-shadow: inset 1px 1px 0 var(--ink); }
+.lcd { background: var(--paper); border: 2px solid; border-color: var(--shadow) var(--hi) var(--hi) var(--shadow); box-shadow: inset 1px 1px 0 var(--ink); padding: 6px 12px; text-align: right; font-weight: 700; font-size: 40px; line-height: 1.15; color: var(--red); font-variant-numeric: tabular-nums; }
+.lcd.sm { font-size: 24px; color: var(--ink); }
+.lcd.sm.red { color: var(--red); }
+
+.btn { min-height: 44px; padding: 0 14px; background: var(--face); border: 2px solid; border-color: var(--hi) var(--ink) var(--ink) var(--hi); box-shadow: inset -1px -1px 0 var(--shadow); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; color: var(--ink); }
+.btn:active:not(:disabled) { border-color: var(--ink) var(--hi) var(--hi) var(--ink); box-shadow: inset 1px 1px 0 var(--shadow); }
+.btn.primary { background: var(--red); color: #fff; border-color: var(--red-lt) var(--red-xdk) var(--red-xdk) var(--red-lt); box-shadow: none; outline: 1px solid var(--ink); font-weight: 700; }
+.btn.primary:active:not(:disabled) { border-color: var(--red-xdk) var(--red-lt) var(--red-lt) var(--red-xdk); }
+.btn.big { min-height: 50px; font-size: 17px; width: 100%; }
+.btn.sm { min-height: 36px; padding: 0 10px; font-size: 14px; }
+.btn.approve { min-width: 96px; outline: 1px solid var(--ink); font-weight: 700; color: var(--red); }
+.btn:disabled { color: var(--shadow); text-shadow: 1px 1px 0 #fff; cursor: default; }
+.btn.primary:disabled { background: var(--face); color: var(--shadow); border-color: var(--hi) var(--ink) var(--ink) var(--hi); }
+.link { background: none; border: 0; padding: 0; color: var(--red); font-weight: 700; cursor: pointer; text-decoration: underline; min-height: 32px; }
+
+.input { height: 44px; width: 100%; min-width: 0; padding: 0 10px; background: #fff; border: 2px solid; border-color: var(--shadow) var(--hi) var(--hi) var(--shadow); box-shadow: inset 1px 1px 0 var(--ink); border-radius: 0; color: var(--ink); }
+.input.money { font-weight: 700; font-size: 24px; color: var(--red); text-align: right; font-variant-numeric: tabular-nums; height: 50px; }
+.input.time { font-weight: 700; font-size: 18px; color: var(--desk); height: 50px; }
+select.input { padding: 0 6px; }
+label.lab { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+
+fieldset.group { margin: 0; border: 1px solid var(--shadow); box-shadow: 1px 1px 0 #fff, inset 1px 1px 0 #fff; padding: 4px 10px 10px; min-width: 0; }
+fieldset.group > legend { padding: 0 4px; }
+
+.ck { appearance: none; -webkit-appearance: none; width: 22px; height: 22px; flex: none; margin: 0; background: #fff; border: 2px solid; border-color: var(--shadow) var(--hi) var(--hi) var(--shadow); box-shadow: inset 1px 1px 0 var(--ink); cursor: pointer; display: inline-grid; place-content: center; }
+.ck:checked::after { content: ""; width: 12px; height: 12px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M1.5 6l3 3 6-7' fill='none' stroke='%230F3D45' stroke-width='2.4'/%3E%3C/svg%3E") center/contain no-repeat; }
+.ck.radio { border-radius: 50%; }
+.ck.radio:checked::after { width: 8px; height: 8px; border-radius: 50%; background: var(--desk); }
+.opt { display: flex; align-items: center; gap: 10px; min-height: 44px; cursor: pointer; min-width: 0; }
+.opt span { overflow: hidden; text-overflow: ellipsis; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 10px; }
+
+.list { display: flex; flex-direction: column; font-size: 14px; }
+.lh { display: grid; }
+.lh > span { background: var(--face); border: 1px solid; border-color: var(--hi) var(--shadow) var(--shadow) var(--hi); padding: 3px 6px; font-size: 13px; }
+.lrow { display: grid; align-items: center; padding: 6px 0; border-bottom: 1px dotted var(--shadow); background: none; border-left: 0; border-right: 0; border-top: 0; text-align: left; width: 100%; cursor: default; }
+.lrow:last-child { border-bottom: 0; }
+.lrow > * { padding: 0 6px; min-width: 0; }
+button.lrow { cursor: pointer; }
+button.lrow:hover, button.lrow:focus-visible { background: var(--sel); color: #fff; }
+button.lrow:hover .muted, button.lrow:focus-visible .muted { color: #E9DFCF; }
+.sect { padding: 3px 8px; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #fff; background: var(--red); }
+.sect.blue { background: var(--blue); color: var(--ink); }
+.sect.yellow { background: var(--yellow); color: var(--ink); }
+
+.approved { display: inline-flex; align-items: center; gap: 6px; color: var(--green-ink); font-weight: 700; min-height: 40px; background: none; border: 0; padding: 0; cursor: pointer; text-align: left; }
+.minick { width: 18px; height: 18px; flex: none; background: #fff; border: 2px solid; border-color: var(--shadow) var(--hi) var(--hi) var(--shadow); box-shadow: inset 1px 1px 0 var(--ink); display: inline-grid; place-content: center; }
+.tag { display: inline-block; font-size: 11px; font-weight: 700; padding: 1px 5px; border: 1px solid var(--ink); background: var(--yellow); color: var(--ink); white-space: nowrap; }
+.tag.blue { background: var(--blue); }
+.tag.grey { background: var(--face); }
+
+.progress { height: 22px; padding: 2px; }
+.progress > div { height: 100%; background: repeating-linear-gradient(90deg, var(--green) 0 11px, transparent 11px 14px); }
+.info { background: var(--info); border: 1px solid var(--ink); padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; }
+.err { color: var(--red-xdk); background: #F9D9D6; border: 1px solid var(--red-xdk); padding: 8px 10px; font-size: 14px; }
+.warnline { color: var(--warn); font-size: 13px; font-weight: 700; }
+.status { margin: 0 3px 3px; padding: 2px 6px; font-size: 12px; border: 1px solid; border-color: var(--shadow) var(--hi) var(--hi) var(--shadow); }
+.tree { padding: 4px 0; }
+.node { display: flex; align-items: center; gap: 8px; width: 100%; min-height: 44px; padding: 0 8px; border: 0; background: transparent; text-align: left; cursor: pointer; }
+.pm { width: 18px; height: 18px; flex: none; border: 1px solid var(--shadow); background: #fff; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; line-height: 1; }
+.kids { margin-left: 17px; border-left: 1px dotted var(--shadow); padding: 0 6px 4px 10px; display: flex; flex-direction: column; }
+.person { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 8px; align-items: center; min-height: 48px; }
+.empty { padding: 14px 10px; text-align: center; color: var(--muted); font-size: 14px; display: flex; flex-direction: column; gap: 10px; align-items: center; }
+
+.taskbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: var(--face); border-top: 2px solid var(--hi); box-shadow: 0 -1px 0 var(--hi2); padding-top: 5px; padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px)); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.taskbar .in { max-width: 480px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
+.tab { min-height: 46px; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 14px; background: var(--face); color: var(--ink); border: 2px solid; border-color: var(--hi) var(--ink) var(--ink) var(--hi); box-shadow: inset -1px -1px 0 var(--shadow); cursor: pointer; padding: 0 4px; }
+.tab[aria-current="page"] { font-weight: 700; background: repeating-conic-gradient(#F4ECE1 0 25%, #FFFFFF 0 50%) 0 0 / 2px 2px; border-color: var(--ink) var(--hi) var(--hi) var(--ink); box-shadow: inset 1px 1px 0 var(--shadow); }
+
+.overlay { position: fixed; inset: 0; z-index: 30; background: rgba(15, 61, 69, 0.82); overflow-y: auto; padding-top: max(16px, env(safe-area-inset-top, 0px)); padding-bottom: max(16px, env(safe-area-inset-bottom, 0px)); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.overlay .win { max-width: 480px; margin: 0 auto; }
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(70px + env(safe-area-inset-bottom, 0px)); z-index: 40; max-width: calc(100% - 32px); background: var(--info); color: var(--ink); border: 1px solid var(--ink); padding: 8px 12px; font-size: 14px; box-shadow: 2px 2px 0 var(--ink); }
+.ico { width: 16px; height: 16px; flex: none; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="shell" id="screen" aria-live="off"></div>
+<nav class="taskbar" aria-label="Sections"><div class="in" id="tabs"></div></nav>
+<div id="dialog"></div>
+<div id="toast" class="toast" role="status" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  /* ---------- split engine (tested) ---------- */
+  function splitEven(cents, ids) {
+    const out = {}; const n = ids.length; if (!n) return out;
+    const base = Math.floor(cents / n); const rem = cents - base * n;
+    ids.forEach((id, i) => { out[id] = base + (i < rem ? 1 : 0); });
+    return out;
+  }
+  function sortLogs(logs) { return [...(logs || [])].sort((a, b) => (a.time < b.time ? -1 : a.time > b.time ? 1 : 0)); }
+  function computeDay(logs, rules) {
+    const gp = Number(rules.glassesPct) || 0, pp = Number(rules.prepPct) || 0;
+    const sorted = sortLogs(logs); const people = {}; const intervals = [];
+    let prev = 0, prevTime = null, prep = 0, unassigned = 0, glassesTotal = 0;
+    const person = (id) => (people[id] = people[id] || { id, total: 0, parts: [], from: undefined, to: null, glasses: false, bar: false });
+    for (const log of sorted) {
+      const delta = log.total - prev;
+      const iv = { log, from: prevTime, to: log.time, delta, glassesC: 0, prepC: 0, barC: 0, shares: {}, error: null };
+      if (delta < 0) { iv.error = 'lower'; }
+      else {
+        const g = log.glasses ? Math.round(delta * gp / 100) : 0;
+        const rest = delta - g; const p = Math.round(rest * pp / 100); const bar = rest - p;
+        iv.glassesC = g; iv.prepC = p; iv.barC = bar; prep += p; glassesTotal += g;
+        const barIds = (log.bar || []).filter((id) => id !== log.glasses);
+        if (barIds.length) {
+          iv.shares = splitEven(bar, barIds);
+          for (const id of barIds) { const pr = person(id); pr.bar = true; pr.total += iv.shares[id]; pr.parts.push({ cents: iv.shares[id], kind: 'bar' }); if (pr.from === undefined) pr.from = prevTime; pr.to = log.time; }
+        } else { unassigned += bar; }
+        if (log.glasses) { const pr = person(log.glasses); pr.glasses = true; pr.total += g; pr.parts.push({ cents: g, kind: 'glasses', of: delta, pct: gp }); if (pr.from === undefined) pr.from = prevTime; pr.to = log.time; }
+      }
+      intervals.push(iv); prev = log.total; prevTime = log.time;
+    }
+    const list = Object.values(people).sort((a, b) => { const fa = a.from || '', fb = b.from || ''; return fa < fb ? -1 : fa > fb ? 1 : 0; });
+    return { intervals, people: list, byId: people, prep, unassigned, glassesTotal, total: prev, paid: list.reduce((s, p) => s + p.total, 0) };
+  }
+  function computeWeekPrep(pot, monId, friId) {
+    const shifts = [monId, friId].filter(Boolean); const out = {};
+    const share = splitEven(pot, shifts.map((_, i) => 's' + i));
+    shifts.forEach((id, i) => { out[id] = (out[id] || 0) + share['s' + i]; });
+    return out;
+  }
+
+  /* ---------- helpers ---------- */
+  const $ = (s, r) => (r || document).querySelector(s);
+  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const euro = (c) => (c / 100).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  function parseEuro(str) {
+    let s = String(str || '').replace(/[\s€]/g, '');
+    if (!s) return NaN;
+    if (s.includes(',')) s = s.replace(/\./g, '').replace(',', '.');
+    if (!/^\d+(\.\d{0,2})?$/.test(s)) return NaN;
+    return Math.round(parseFloat(s) * 100);
+  }
+  const pad = (n) => String(n).padStart(2, '0');
+  const iso = (d) => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+  const fromIso = (s) => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+  const addDays = (s, n) => { const d = fromIso(s); d.setDate(d.getDate() + n); return iso(d); };
+  const mondayOf = (s) => { const d = fromIso(s); return addDays(s, -((d.getDay() + 6) % 7)); };
+  const todayIso = () => iso(new Date());
+  const nowTime = () => { const d = new Date(); return pad(d.getHours()) + ':' + pad(d.getMinutes()); };
+  const niceDate = (s) => fromIso(s).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+  const deDate = (s) => { const [y, m, d] = s.split('-'); return d + '.' + m + '.' + y; };
+  const timeOf = (isoStr) => { const d = new Date(isoStr); return pad(d.getHours()) + ':' + pad(d.getMinutes()); };
+  function isoWeek(s) { const d = fromIso(s); const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())); const day = t.getUTCDay() || 7; t.setUTCDate(t.getUTCDate() + 4 - day); const y0 = new Date(Date.UTC(t.getUTCFullYear(), 0, 1)); return Math.ceil(((t - y0) / 86400000 + 1) / 7); }
+  const genId = () => Math.random().toString(36).slice(2, 10);
+  const clone = (o) => JSON.parse(JSON.stringify(o));
+
+  const ICON = {
+    clock: '<svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="#FBF6EE" stroke="#1B1B1B"/><path d="M8 4v4l3 2" stroke="#C9302C" stroke-width="1.5" fill="none"/></svg>',
+    cash: '<svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><rect x="1" y="4" width="14" height="9" fill="#2E9E4F" stroke="#1B1B1B"/><circle cx="8" cy="8.5" r="2" fill="#F6B70F" stroke="#1B1B1B"/></svg>',
+    cal: '<svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="3" width="13" height="11.5" fill="#FBF6EE" stroke="#1B1B1B"/><rect x="1.5" y="3" width="13" height="3" fill="#C9302C" stroke="#1B1B1B"/><rect x="4" y="8" width="2" height="2" fill="#1B1B1B"/><rect x="9" y="10.5" width="2" height="2" fill="#F6B70F" stroke="#1B1B1B" stroke-width="0.5"/></svg>',
+    staff: '<svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="5" r="3" fill="#2C7FB8" stroke="#1B1B1B"/><path d="M2 15c0-3.5 2.7-5.5 6-5.5s6 2 6 5.5z" fill="#0F3D45" stroke="#1B1B1B"/></svg>',
+    info: '<svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.5" fill="#2C7FB8" stroke="#1B1B1B"/><rect x="9" y="8" width="2" height="7" fill="#fff"/><rect x="9" y="5" width="2" height="2" fill="#fff"/></svg>',
+    tick: '<svg width="10" height="10" viewBox="0 0 12 12" aria-hidden="true"><path d="M1.5 6l3 3 6-7" fill="none" stroke="#1E6B35" stroke-width="2.6"/></svg>',
+    folder: (c) => '<svg width="20" height="16" viewBox="0 0 20 16" aria-hidden="true"><path d="M1 3h6l2 2h10v10H1z" fill="' + c + '" stroke="#1B1B1B"/></svg>',
+    pdf: '<svg width="18" height="18" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 1h7l3 3v11H3z" fill="#fff" stroke="#1B1B1B"/><path d="M10 1v3h3" fill="none" stroke="#1B1B1B"/><rect x="5" y="9" width="6" height="3" fill="#C9302C"/></svg>'
+  };
+
+  /* ---------- storage: shared db, or this device only ---------- */
+  const DEFAULT_SETTINGS = { company: { name: '', street: '', postcode: '', city: '' }, glassesPct: 10, prepPct: 5, prepMon: null, prepFri: null };
+  const store = {
+    mode: 'connecting', db: null, local: null, listeners: [],
+    loadLocal() { try { this.local = JSON.parse(localStorage.getItem('trinkgeld-split') || '{}') || {}; } catch (e) { this.local = {}; } },
+    saveLocal() { try { localStorage.setItem('trinkgeld-split', JSON.stringify(this.local)); } catch (e) { /* storage blocked */ } },
+    notify() { this.listeners.forEach((l) => l.fire()); },
+    onDoc(path, cb) {
+      if (this.mode === 'remote') {
+        return this.db.doc(path).onSnapshot((s) => cb(s.exists ? s.data() : null), (e) => showToast(dbMessage(e)));
+      }
+      const l = { fire: () => cb(this.local[path] ? clone(this.local[path]) : null) };
+      this.listeners.push(l); l.fire();
+      return () => { this.listeners = this.listeners.filter((x) => x !== l); };
+    },
+    onDays(from, to, cb) {
+      if (this.mode === 'remote') {
+        return this.db.collection('days').where('date', '>=', from).where('date', '<=', to).onSnapshot((qs) => cb(qs.docs.map((d) => d.data())), (e) => showToast(dbMessage(e)));
+      }
+      const l = { fire: () => cb(Object.keys(this.local).filter((k) => k.startsWith('days/')).map((k) => this.local[k]).filter((d) => d.date >= from && d.date <= to).map(clone)) };
+      this.listeners.push(l); l.fire();
+      return () => { this.listeners = this.listeners.filter((x) => x !== l); };
+    },
+    async set(path, data) {
+      if (this.mode === 'remote') { await this.db.doc(path).set(data); return; }
+      this.local[path] = clone(data); this.saveLocal(); this.notify();
+    }
+  };
+  function dbMessage(e) {
+    const code = e && e.code;
+    if (code === 'invalid_argument') return 'You can view this page but not change it. Ask the owner for edit access.';
+    if (code === 'quota_exceeded') return 'Storage is full. Old days need to be removed before new ones can be saved.';
+    if (code === 'resource_exhausted') return 'Too many changes at once. Wait a moment and try again.';
+    return 'Could not reach the shared data. Check your connection and try again.';
+  }
+
+  /* ---------- state ---------- */
+  const state = {
+    tab: 'today', date: todayIso(), weekMon: mondayOf(todayIso()),
+    settings: clone(DEFAULT_SETTINGS), roster: [], day: null, weekDays: [], weekDoc: null,
+    dialog: null, open: { bar: true, glasses: false, prep: false, former: false, rules: false, company: false },
+    editStaff: null, confirmDelete: false, undoFor: null, pdfBusy: false, downloads: undefined
+  };
+  const subs = {};
+  function resub(key, fn) { if (subs[key]) subs[key](); subs[key] = fn(); }
+  function subscribeDay() { resub('day', () => store.onDoc('days/' + state.date, (d) => { state.day = d; render(); if (state.dialog) refreshPreview(); })); }
+  function subscribeWeek() {
+    resub('week', () => store.onDays(state.weekMon, addDays(state.weekMon, 6), (list) => { state.weekDays = list; render(); }));
+    resub('weekdoc', () => store.onDoc('weeks/' + state.weekMon, (d) => { state.weekDoc = d; render(); }));
+  }
+  function subscribeAll() {
+    resub('settings', () => store.onDoc('settings/main', (d) => { state.settings = Object.assign(clone(DEFAULT_SETTINGS), d || {}); state.settings.company = Object.assign({}, DEFAULT_SETTINGS.company, (d && d.company) || {}); render(); }));
+    resub('roster', () => store.onDoc('settings/staff', (d) => { state.roster = (d && d.list) || []; render(); if (state.dialog) refreshPreview(); }));
+    subscribeDay(); subscribeWeek();
+  }
+
+  const nameOf = (id) => { const p = state.roster.find((r) => r.id === id); return p ? p.name : '(removed)'; };
+  const activeOf = (role) => state.roster.filter((r) => r.active !== false && r.role === role);
+  const dayRules = (day) => (day && day.rules) || { glassesPct: state.settings.glassesPct, prepPct: state.settings.prepPct };
+  const canWrite = () => store.mode === 'remote' || store.mode === 'local';
+
+  async function saveDay(mutate) {
+    const cur = state.day ? clone(state.day) : { date: state.date, logs: [], approvals: {} };
+    cur.date = state.date; cur.logs = cur.logs || []; cur.approvals = cur.approvals || {};
+    if (!cur.rules) cur.rules = { glassesPct: Number(state.settings.glassesPct) || 0, prepPct: Number(state.settings.prepPct) || 0 };
+    mutate(cur);
+    await store.set('days/' + state.date, cur);
+  }
+  async function saveRoster(list) { await store.set('settings/staff', { list }); }
+  async function saveSettings(patch) { await store.set('settings/main', Object.assign(clone(state.settings), patch)); }
+  async function saveWeek(patch) { await store.set('weeks/' + state.weekMon, Object.assign({ approvals: {} }, state.weekDoc ? clone(state.weekDoc) : {}, patch)); }
+  async function guard(fn, done) { try { await fn(); if (done) showToast(done); } catch (e) { showToast(dbMessage(e)); } }
+
+  let toastTimer = null;
+  function showToast(msg) { const t = $('#toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; }, 3200); }
+
+  /* ---------- rendering ---------- */
+  const screenEl = $('#screen');
+  let pending = false;
+  function render() {
+    const ae = document.activeElement;
+    if (ae && screenEl.contains(ae) && /^(INPUT|SELECT|TEXTAREA)$/.test(ae.tagName)) { pending = true; return; }
+    pending = false;
+    const kept = {};
+    screenEl.querySelectorAll('input[id], select[id]').forEach((el) => { if (el.type !== 'checkbox' && el.type !== 'radio') kept[el.id] = el.value; });
+    const html = state.tab === 'today' ? viewToday() : state.tab === 'payout' ? viewPayout() : state.tab === 'week' ? viewWeek() : viewStaff();
+    screenEl.innerHTML = html;
+    Object.keys(kept).forEach((id) => { const el = document.getElementById(id); if (el && el.dataset.keep !== undefined) el.value = kept[id]; });
+    renderTabs();
+  }
+  screenEl.addEventListener('focusout', () => setTimeout(() => { if (pending) render(); }, 0));
+
+  function renderTabs() {
+    const tabs = [['today', 'Today', ICON.clock], ['payout', 'Payout', ICON.cash], ['week', 'Week', ICON.cal], ['staff', 'Staff', ICON.staff]];
+    $('#tabs').innerHTML = tabs.map(([k, l, i]) => '<button type="button" class="tab" data-act="tab" data-tab="' + k + '"' + (state.tab === k ? ' aria-current="page"' : '') + '>' + i + l + '</button>').join('');
+  }
+
+  function win(title, body, opts) {
+    opts = opts || {};
+    return '<section class="win" aria-label="' + esc(opts.label || title) + '"><div class="title' + (opts.grey ? ' grey' : '') + '">' + (opts.icon || '') + '<span class="grow">' + esc(title) + '</span>' + (opts.close ? '<button type="button" class="tbtn" data-act="' + opts.close + '" aria-label="Close">×</button>' : '') + '</div><div class="body">' + body + '</div>' + (opts.status ? '<div class="status">' + opts.status + '</div>' : '') + '</section>';
+  }
+  function syncLine() {
+    if (store.mode === 'remote') return '<span class="small" style="color:var(--green-ink)">● Shared live with your team</span>';
+    if (store.mode === 'local') return '<span class="small" style="color:var(--warn)">Saved on this device only</span>';
+    return '<span class="small muted">Connecting…</span>';
+  }
+  function dateNav() {
+    const isToday = state.date === todayIso();
+    return '<div class="row"><button type="button" class="btn sm" data-act="day" data-n="-1" aria-label="Previous day">‹</button><span class="grow b" style="text-align:center">' + esc(niceDate(state.date)) + (isToday ? ' · today' : '') + '</span><button type="button" class="btn sm" data-act="day" data-n="1" aria-label="Next day">›</button>' + (isToday ? '' : '<button type="button" class="btn sm" data-act="day-today">Today</button>') + '</div>';
+  }
+  const companyName = () => state.settings.company.name || 'Your company';
+
+  function viewToday() {
+    const day = state.day; const logs = sortLogs(day && day.logs); const r = computeDay(logs, dayRules(day));
+    const last = logs[logs.length - 1];
+    let shift = '';
+    if (last) {
+      const bar = (last.bar || []).filter((id) => id !== last.glasses);
+      shift = '<div class="grid2" style="gap:6px 10px">' + (bar.length ? bar.map((id) => '<span class="row">' + ICON.staff + '<span>' + esc(nameOf(id)) + '</span></span>').join('') : '<span class="muted small">No bar staff ticked</span>') + '</div>' +
+        (last.glasses ? '<div class="row" style="border-top:1px dotted var(--shadow); padding-top:6px; margin-top:6px">' + esc(nameOf(last.glasses)) + ' <span class="tag blue">Glasses</span><span class="xs muted">since ' + esc(last.time) + '</span></div>' : '');
+    } else {
+      shift = '<span class="small muted">Nobody logged yet. The first log says who started.</span>';
+    }
+    const noStaff = !state.roster.some((p) => p.active !== false);
+    const top = win('Tips — ' + niceDate(state.date),
+      dateNav() +
+      '<div class="row between"><span class="small">' + esc(companyName()) + '</span>' + syncLine() + '</div>' +
+      '<span>Card tips so far (LS Pay):</span>' +
+      '<div class="lcd">' + euro(r.total) + ' €</div>' +
+      '<span class="small muted">' + (last ? 'Last log ' + esc(last.time) + ' · ' + logs.length + (logs.length === 1 ? ' log' : ' logs') : 'No logs for this day yet') + '</span>' +
+      '<fieldset class="group"><legend>' + (last ? 'Working since last log' : 'On shift') + '</legend>' + shift + '</fieldset>' +
+      (noStaff ? '<div class="info"><span class="b">Add your team first</span><span class="small">Add bar staff and glasses runners in Staff, then log tips here.</span><button type="button" class="btn sm" data-act="tab" data-tab="staff">Go to Staff</button></div>' : '') +
+      '<button type="button" class="btn primary big" data-act="log-new"' + (canWrite() && !noStaff ? '' : ' disabled') + '>Log tips…</button>',
+      { icon: ICON.cash });
+
+    let rows;
+    if (!logs.length) {
+      rows = '<div class="empty"><span>Log the LS Pay total whenever someone starts or leaves, and once more at closing.</span></div>';
+    } else {
+      rows = '<div class="sunken list"><div class="lh" style="grid-template-columns:56px 76px minmax(0,1fr)"><span>Time</span><span>Added</span><span>Shared by</span></div>' +
+        r.intervals.slice().reverse().map((iv) => {
+          const who = (iv.log.bar || []).filter((id) => id !== iv.log.glasses).map(nameOf).join(', ');
+          const g = iv.log.glasses ? ' + <span class="tag blue">' + esc(nameOf(iv.log.glasses)) + '</span>' : '';
+          return '<button type="button" class="lrow" data-act="log-edit" data-id="' + esc(iv.log.id) + '" style="grid-template-columns:56px 76px minmax(0,1fr)" aria-label="Edit log at ' + esc(iv.log.time) + '">' +
+            '<span class="b">' + esc(iv.log.time) + '</span><span class="num">' + (iv.error ? '<span style="color:var(--red)">lower!</span>' : '+' + euro(iv.delta)) + '</span><span>' + (esc(who) || '<span class="muted">nobody</span>') + g + '</span></button>';
+        }).join('') + '</div>';
+    }
+    const errs = r.intervals.filter((i) => i.error).length;
+    const list = win('Logs', (errs ? '<div class="err">A log has a lower total than the one before it. Tap it to fix the amount.</div>' : '') + rows + (logs.length ? '<span class="xs muted">Tap a log to correct it.</span>' : ''),
+      { grey: true, status: logs.length + (logs.length === 1 ? ' log' : ' logs') + ' · total ' + euro(r.total) + ' €' });
+    return top + list;
+  }
+
+  function personRows(people, approvals) {
+    return people.map((p) => {
+      const a = approvals[p.id];
+      const parts = p.parts.map((pt) => pt.kind === 'glasses' ? pt.pct + '% of ' + euro(pt.of) : euro(pt.cents)).join(' + ');
+      const shift = (p.from ? p.from : 'start') + '–' + (p.to || '');
+      let status;
+      if (a && a.cents === p.total) {
+        status = state.undoFor === p.id
+          ? '<span class="row"><button type="button" class="btn sm" data-act="unapprove" data-id="' + esc(p.id) + '">Undo</button><button type="button" class="btn sm" data-act="undo-cancel">Keep</button></span>'
+          : '<button type="button" class="approved" data-act="undo-ask" data-id="' + esc(p.id) + '" aria-label="Approved at ' + esc(timeOf(a.at)) + '. Tap to undo."><span class="minick">' + ICON.tick + '</span><span>Approved<br><span class="xs muted" style="font-weight:400">' + esc(timeOf(a.at)) + '</span></span></button>';
+      } else {
+        status = (a ? '<span class="xs" style="color:var(--warn); display:block">Amount changed</span>' : '') + '<button type="button" class="btn approve sm" data-act="approve" data-id="' + esc(p.id) + '"' + (canWrite() ? '' : ' disabled') + '>Approve' + (a ? ' again' : '') + '</button>';
+      }
+      return '<div class="lrow" style="grid-template-columns:minmax(0,1fr) 70px 112px"><div style="display:flex; flex-direction:column"><b>' + esc(nameOf(p.id)) + '</b><span class="xs muted">' + esc(shift) + ' · ' + esc(parts) + '</span></div><span class="num b" style="text-align:right">' + euro(p.total) + '</span><div>' + status + '</div></div>';
+    }).join('');
+  }
+
+  function viewPayout() {
+    const day = state.day; const logs = sortLogs(day && day.logs); const rules = dayRules(day); const r = computeDay(logs, rules);
+    const approvals = (day && day.approvals) || {};
+    const done = r.people.filter((p) => approvals[p.id] && approvals[p.id].cents === p.total).length;
+    const waiting = r.people.filter((p) => !(approvals[p.id] && approvals[p.id].cents === p.total)).map((p) => nameOf(p.id));
+    const bar = r.people.filter((p) => p.bar); const gl = r.people.filter((p) => !p.bar && p.glasses);
+    let body = dateNav();
+    if (!logs.length) {
+      body += '<div class="empty"><span>No tips logged for this day, so there is nothing to pay out yet.</span><button type="button" class="btn sm" data-act="tab" data-tab="today">Go to Today</button></div>';
+      return win('Payout — ' + niceDate(state.date), body, { icon: ICON.cash });
+    }
+    body += '<div class="row between" style="align-items:center"><div class="small" style="display:flex; flex-direction:column"><span>LS Pay tips</span><span class="muted">' + euro(r.paid) + ' paid out · ' + euro(r.prep) + ' to prep pot</span></div><div class="lcd" style="font-size:30px">' + euro(r.total) + ' €</div></div>' +
+      '<span class="xs muted">Rules for this day: glasses ' + esc(rules.glassesPct) + '% · prep ' + esc(rules.prepPct) + '% of the rest</span>' +
+      (r.unassigned ? '<div class="err">' + euro(r.unassigned) + ' € is not assigned to anyone. Edit the log that has nobody ticked.</div>' : '') +
+      (r.intervals.some((i) => i.error) ? '<div class="err">One log has a lower total than the one before. Fix it on Today before paying out.</div>' : '') +
+      '<div style="display:flex; flex-direction:column; gap:4px"><div class="row between small"><span>' + done + ' of ' + r.people.length + ' approved</span><span class="muted" style="text-align:right">' + (waiting.length ? 'Waiting: ' + esc(waiting.join(', ')) : 'Everyone has approved') + '</span></div><div class="sunken progress"><div style="width:' + (r.people.length ? Math.round(done / r.people.length * 100) : 0) + '%"></div></div></div>' +
+      '<div class="sunken list"><div class="lh" style="grid-template-columns:minmax(0,1fr) 70px 112px"><span>Name</span><span style="text-align:right">€</span><span>Status</span></div>' +
+      (bar.length ? '<div class="sect">Bar</div>' + personRows(bar, approvals) : '') +
+      (gl.length ? '<div class="sect blue">Glasses</div>' + personRows(gl, approvals) : '') +
+      '<div class="sect yellow">Prep pot</div><button type="button" class="lrow" data-act="tab" data-tab="week" style="grid-template-columns:minmax(0,1fr) 70px 112px"><div style="display:flex; flex-direction:column"><span>' + esc(rules.prepPct) + '% after glasses, held for prep</span><span class="xs muted">Paid out weekly</span></div><span class="num b" style="text-align:right">' + euro(r.prep) + '</span><span class="small b" style="color:inherit">See week ›</span></button></div>' +
+      pdfButton();
+    return win('Payout — ' + niceDate(state.date), body, { icon: ICON.cash });
+  }
+  function pdfButton() {
+    if (state.downloads === null) return '<span class="xs muted" style="text-align:center">Saving files isn’t available in this view.</span>';
+    return '<button type="button" class="btn primary big" data-act="pdf"' + (state.pdfBusy ? ' disabled' : '') + '>' + ICON.pdf + (state.pdfBusy ? 'Preparing PDF…' : 'Save as PDF…') + '</button>';
+  }
+
+  function viewWeek() {
+    const mon = state.weekMon; const sun = addDays(mon, 6); const today = todayIso();
+    const byDate = {}; state.weekDays.forEach((d) => { byDate[d.date] = d; });
+    let tips = 0, pot = 0;
+    const rows = [0, 1, 2, 3, 4, 5, 6].map((i) => {
+      const date = addDays(mon, i); const d = byDate[date];
+      const r = d ? computeDay(d.logs, dayRules(d)) : null;
+      if (r) { tips += r.total; pot += r.prep; }
+      const prepTag = (i === 0 || i === 4) ? ' <span class="tag">PREP</span>' : '';
+      const isT = date === today;
+      return '<button type="button" class="lrow" data-act="goto-day" data-date="' + date + '" style="grid-template-columns:minmax(0,1fr) 86px 76px' + (isT ? '; background:var(--sel); color:#fff' : '') + '"><span' + (isT ? ' class="b"' : '') + '>' + esc(niceDate(date)) + prepTag + '</span><span class="num" style="text-align:right">' + (r ? euro(r.total) : '–') + '</span><span class="num" style="text-align:right">' + (r ? euro(r.prep) : '–') + '</span></button>';
+    }).join('');
+    const wd = state.weekDoc || {};
+    const monId = wd.mon !== undefined ? wd.mon : state.settings.prepMon;
+    const friId = wd.fri !== undefined ? wd.fri : state.settings.prepFri;
+    const shares = computeWeekPrep(pot, monId, friId);
+    const ended = today > sun;
+    const approvals = wd.approvals || {};
+    const barStaff = state.roster.filter((p) => p.role === 'bar' && (p.active !== false || p.id === monId || p.id === friId));
+    const sel = (key, val) => '<select class="input" id="prep-' + key + '" data-act="week-prep" data-key="' + key + '" aria-label="' + (key === 'mon' ? 'Monday' : 'Friday') + ' prep">' +
+      '<option value="">Nobody</option>' + barStaff.map((p) => '<option value="' + esc(p.id) + '"' + (p.id === val ? ' selected' : '') + '>' + esc(p.name) + '</option>').join('') + '</select>';
+    const shiftRow = (key, label, date, id) => {
+      const amt = id ? shares[id] || 0 : 0; const a = id && approvals[id];
+      let status = '';
+      if (id) {
+        if (a && a.cents === amt) status = '<span class="approved" style="cursor:default"><span class="minick">' + ICON.tick + '</span>Approved</span>';
+        else status = '<button type="button" class="btn approve sm" data-act="prep-approve" data-id="' + esc(id) + '"' + (ended && canWrite() ? '' : ' disabled') + '>Approve</button>';
+      }
+      return '<div style="display:grid; grid-template-columns:minmax(0,1fr) 70px; gap:6px 8px; align-items:center; padding:6px 0; border-bottom:1px dotted var(--shadow)"><label class="lab"><span class="small"><b>' + label + '</b> · ' + esc(niceDate(date)) + '</span>' + sel(key, id) + '</label><span class="num b" style="text-align:right; align-self:end; padding-bottom:10px">' + (id ? euro(amt) : '–') + '</span>' + (status ? '<div style="grid-column:1 / -1">' + status + '</div>' : '') + '</div>';
+    };
+    const body =
+      '<div class="row"><button type="button" class="btn sm" data-act="week" data-n="-7" aria-label="Previous week">‹</button><span class="grow b" style="text-align:center">' + esc(niceDate(mon)) + ' – ' + esc(niceDate(sun)) + '</span><button type="button" class="btn sm" data-act="week" data-n="7" aria-label="Next week">›</button></div>' +
+      '<div class="grid2" style="gap:8px"><label class="lab"><span class="small">Week’s tips' + (ended ? '' : ' so far') + '</span><div class="lcd sm">' + euro(tips) + ' €</div></label><label class="lab"><span class="small">Prep pot</span><div class="lcd sm red">' + euro(pot) + ' €</div></label></div>' +
+      '<div class="sunken list small"><div class="lh" style="grid-template-columns:minmax(0,1fr) 86px 76px"><span>Day</span><span style="text-align:right">Tips</span><span style="text-align:right">To prep</span></div>' + rows + '</div>' +
+      '<fieldset class="group"><legend>Prep shifts this week</legend>' + shiftRow('mon', 'Monday', mon, monId) + shiftRow('fri', 'Friday', addDays(mon, 4), friId) +
+      '<span class="xs muted" style="display:block; margin-top:6px">The pot is shared equally between the prep shifts. ' + (ended ? 'The week is finished, so prep can be approved.' : 'Amounts so far. Approve after Sunday’s last log.') + '</span></fieldset>';
+    return win('Week ' + isoWeek(mon) + ' — Prep pot', body, { icon: ICON.cal });
+  }
+
+  function viewStaff() {
+    const o = state.open; const s = state.settings;
+    const node = (key, label, count, color) => '<button type="button" class="node" data-act="toggle" data-key="' + key + '" aria-expanded="' + !!o[key] + '"><span class="pm" aria-hidden="true">' + (o[key] ? '−' : '+') + '</span>' + ICON.folder(color) + '<b>' + label + '</b>' + (count !== null ? '<span class="muted">(' + count + ')</span>' : '') + '</button>';
+    const prepTag = (id) => (s.prepMon === id ? ' <span class="tag">Prep Mon</span>' : '') + (s.prepFri === id ? ' <span class="tag">Prep Fri</span>' : '');
+    const personRow = (p, former) => {
+      if (state.editStaff === p.id) {
+        return '<div style="display:flex; flex-direction:column; gap:8px; padding:8px 0; border-bottom:1px dotted var(--shadow)">' +
+          '<label class="lab"><span class="small">Name</span><input class="input" id="edit-name" data-keep value="' + esc(p.name) + '"></label>' +
+          '<label class="lab"><span class="small">Role</span><select class="input" id="edit-role" data-keep><option value="bar"' + (p.role === 'bar' ? ' selected' : '') + '>Bar</option><option value="glasses"' + (p.role === 'glasses' ? ' selected' : '') + '>Glasses runner</option></select></label>' +
+          '<div class="row" style="flex-wrap:wrap"><button type="button" class="btn primary sm" data-act="staff-save" data-id="' + esc(p.id) + '">Save</button><button type="button" class="btn sm" data-act="staff-cancel">Cancel</button>' +
+          (former ? '' : '<button type="button" class="btn sm" data-act="staff-remove" data-id="' + esc(p.id) + '">No longer here</button>') + '</div></div>';
+      }
+      return '<div class="person"><span style="min-width:0">' + esc(p.name) + prepTag(p.id) + '</span><span></span>' +
+        (former ? '<button type="button" class="btn sm" data-act="staff-back" data-id="' + esc(p.id) + '">Bring back</button>' : '<button type="button" class="btn sm" data-act="staff-edit" data-id="' + esc(p.id) + '">Edit…</button>') + '</div>';
+    };
+    const bar = activeOf('bar'), gl = activeOf('glasses'), former = state.roster.filter((p) => p.active === false);
+    const kids = (list, former, emptyMsg) => '<div class="kids">' + (list.length ? list.map((p) => personRow(p, former)).join('') : '<span class="small muted" style="padding:10px 0">' + emptyMsg + '</span>') + '</div>';
+    const barOpts = (val) => '<option value="">Nobody</option>' + bar.map((p) => '<option value="' + esc(p.id) + '"' + (p.id === val ? ' selected' : '') + '>' + esc(p.name) + '</option>').join('');
+    const body =
+      '<label class="lab" for="new-name"><span>Add someone:</span></label>' +
+      '<div style="display:grid; grid-template-columns:minmax(0,1fr) 108px 70px; gap:6px"><input class="input" id="new-name" data-keep placeholder="First name" autocomplete="off"><select class="input" id="new-role" data-keep aria-label="Role"><option value="bar">Bar</option><option value="glasses">Glasses</option></select><button type="button" class="btn primary" data-act="staff-add"' + (canWrite() ? '' : ' disabled') + '>Add</button></div>' +
+      '<div class="sunken tree">' +
+      node('bar', 'Bar', bar.length, '#C9302C') + (o.bar ? kids(bar, false, 'No bar staff yet. Add them above.') : '') +
+      node('glasses', 'Glasses runners', gl.length, '#2C7FB8') + (o.glasses ? kids(gl, false, 'No glasses runners yet. Add them above with the Glasses role.') : '') +
+      node('prep', 'Prep shifts', null, '#F6B70F') + (o.prep ? '<div class="kids" style="gap:8px; padding-top:4px"><span class="xs muted">Done by bar staff on Monday and Friday. Earns ' + esc(s.prepPct) + '% of the week’s tips (after glasses). These are the usual people; change a single week on the Week tab.</span>' +
+        '<label class="lab"><span class="small b">Monday</span><select class="input" id="prep-mon-default" data-act="prep-default" data-key="prepMon">' + barOpts(s.prepMon) + '</select></label>' +
+        '<label class="lab"><span class="small b">Friday</span><select class="input" id="prep-fri-default" data-act="prep-default" data-key="prepFri">' + barOpts(s.prepFri) + '</select></label></div>' : '') +
+      node('former', 'No longer here', former.length, '#E9DFCF') + (o.former ? kids(former, true, 'Nobody here. People you remove stay on past payouts.') : '') +
+      '</div>' +
+      '<fieldset class="group"><legend>Tip rules</legend><button type="button" class="node" style="padding:0" data-act="toggle" data-key="rules" aria-expanded="' + !!o.rules + '"><span class="pm" aria-hidden="true">' + (o.rules ? '−' : '+') + '</span><span class="small">Glasses ' + esc(s.glassesPct) + '% of their shift · Prep ' + esc(s.prepPct) + '% of the rest</span></button>' +
+      (o.rules ? '<div style="display:flex; flex-direction:column; gap:10px">' +
+        '<label class="lab"><span class="small">Glasses share of tips logged during their shift (%)</span><input class="input" id="rule-glasses" data-keep inputmode="decimal" value="' + esc(s.glassesPct) + '"></label>' +
+        '<label class="lab"><span class="small">Prep share of what’s left after glasses (%)</span><input class="input" id="rule-prep" data-keep inputmode="decimal" value="' + esc(s.prepPct) + '"></label>' +
+        '<span class="xs muted">New percentages apply from the next day that has no logs yet. Days already started keep their rules.</span>' +
+        '<div class="row" style="justify-content:flex-end"><button type="button" class="btn primary sm" data-act="rules-save">Save rules</button></div></div>' : '') + '</fieldset>' +
+      '<fieldset class="group"><legend>Company details</legend><button type="button" class="node" style="padding:0" data-act="toggle" data-key="company" aria-expanded="' + !!o.company + '"><span class="pm" aria-hidden="true">' + (o.company ? '−' : '+') + '</span><span class="small">' + esc([s.company.name, s.company.street, [s.company.postcode, s.company.city].filter(Boolean).join(' ')].filter(Boolean).join(' · ') || 'Not filled in yet') + '</span></button>' +
+      (o.company ? '<div style="display:flex; flex-direction:column; gap:10px"><span class="xs muted">Printed at the top of every payout PDF.</span>' +
+        '<label class="lab"><span class="small">Company name</span><input class="input" id="co-name" data-keep value="' + esc(s.company.name) + '"></label>' +
+        '<label class="lab"><span class="small">Street and number</span><input class="input" id="co-street" data-keep value="' + esc(s.company.street) + '"></label>' +
+        '<div style="display:grid; grid-template-columns:110px minmax(0,1fr); gap:8px"><label class="lab"><span class="small">Postcode</span><input class="input" id="co-postcode" data-keep inputmode="numeric" value="' + esc(s.company.postcode) + '"></label><label class="lab"><span class="small">City</span><input class="input" id="co-city" data-keep value="' + esc(s.company.city) + '"></label></div>' +
+        '<div class="row" style="justify-content:flex-end"><button type="button" class="btn primary sm" data-act="company-save">Save details</button></div></div>' : '') + '</fieldset>';
+    return win('Staff — ' + companyName(), body, { icon: ICON.staff, status: bar.length + ' bar · ' + gl.length + ' glasses · ' + former.length + ' former' });
+  }
+
+  /* ---------- log dialog ---------- */
+  function openLog(editId) {
+    const logs = sortLogs(state.day && state.day.logs);
+    let draft;
+    if (editId) {
+      const l = logs.find((x) => x.id === editId); if (!l) return;
+      draft = { total: euro(l.total), time: l.time, bar: [...(l.bar || [])], glasses: l.glasses || '' };
+    } else {
+      const last = logs[logs.length - 1];
+      draft = { total: '', time: nowTime(), bar: last ? [...(last.bar || [])] : [], glasses: last ? (last.glasses || '') : '' };
+    }
+    state.dialog = { editId: editId || null, draft }; state.confirmDelete = false;
+    renderDialog();
+    const t = $('#log-total'); if (t) t.focus();
+  }
+  function readDraft() {
+    const d = state.dialog.draft;
+    const t = $('#log-total'), tm = $('#log-time');
+    if (t) d.total = t.value; if (tm) d.time = tm.value;
+    d.bar = [...document.querySelectorAll('#dialog input[name="bar"]:checked')].map((el) => el.value);
+    const g = document.querySelector('#dialog input[name="glasses"]:checked'); d.glasses = g ? g.value : '';
+    return d;
+  }
+  function renderDialog() {
+    const dl = state.dialog; const box = $('#dialog');
+    if (!dl) { box.innerHTML = ''; document.body.style.overflow = ''; return; }
+    document.body.style.overflow = 'hidden';
+    const d = dl.draft;
+    const logs = sortLogs(state.day && state.day.logs);
+    const prevLog = logs.filter((l) => l.id !== dl.editId && l.time < d.time).pop();
+    const barPeople = state.roster.filter((p) => p.role === 'bar' && (p.active !== false || d.bar.includes(p.id)));
+    const glPeople = state.roster.filter((p) => (p.role === 'glasses' && p.active !== false) || p.id === d.glasses);
+    const ck = (p) => '<label class="opt"><input type="checkbox" class="ck" name="bar" value="' + esc(p.id) + '"' + (d.bar.includes(p.id) ? ' checked' : '') + '><span' + (d.bar.includes(p.id) ? ' class="b"' : '') + '>' + esc(p.name) + '</span></label>';
+    const rd = (id, label) => '<label class="opt"><input type="radio" class="ck radio" name="glasses" value="' + esc(id) + '"' + (d.glasses === id ? ' checked' : '') + '><span>' + esc(label) + '</span></label>';
+    const body =
+      '<div style="display:grid; grid-template-columns:minmax(0,1fr) 110px; gap:10px">' +
+      '<label class="lab"><span>LS Pay tips so far (€)</span><input class="input money" id="log-total" inputmode="decimal" autocomplete="off" placeholder="' + (prevLog ? esc(euro(prevLog.total)) : '0,00') + '" value="' + esc(d.total) + '"></label>' +
+      '<label class="lab"><span>Time</span><input class="input time" id="log-time" type="time" value="' + esc(d.time) + '"></label></div>' +
+      '<span class="xs muted">The running total from the LS Pay report.' + (prevLog ? ' Last log: ' + euro(prevLog.total) + ' € at ' + esc(prevLog.time) + '.' : '') + '</span>' +
+      '<fieldset class="group"><legend id="bar-legend">Bar, ' + esc(prevLog ? prevLog.time : 'start') + ' – ' + esc(d.time || '…') + '</legend><div class="grid2">' + (barPeople.length ? barPeople.map(ck).join('') : '<span class="small muted" style="grid-column:1/-1">No bar staff yet.</span>') + '</div></fieldset>' +
+      '<fieldset class="group"><legend>Glasses runner (gets ' + esc(dayRules(state.day).glassesPct) + '%)</legend><div class="grid2">' + glPeople.map((p) => rd(p.id, p.name)).join('') + rd('', 'No glasses') + '</div></fieldset>' +
+      '<details><summary class="small" style="min-height:36px; display:flex; align-items:center; cursor:pointer">Someone new? Add them here</summary><div style="display:grid; grid-template-columns:minmax(0,1fr) 100px 64px; gap:6px; margin-top:6px"><input class="input" id="dlg-new-name" placeholder="First name" aria-label="New person’s name"><select class="input" id="dlg-new-role" aria-label="Role"><option value="bar">Bar</option><option value="glasses">Glasses</option></select><button type="button" class="btn sm" data-act="dlg-add">Add</button></div></details>' +
+      '<div id="log-preview"></div>' +
+      '<div style="display:grid; grid-template-columns:minmax(0,1.4fr) minmax(0,1fr); gap:10px"><button type="button" class="btn primary big" data-act="log-save" id="log-save">Save log</button><button type="button" class="btn big" data-act="log-close">Cancel</button></div>' +
+      (dl.editId ? (state.confirmDelete
+        ? '<div class="err row between" style="flex-wrap:wrap"><span>Delete the log at ' + esc(d.time) + '?</span><span class="row"><button type="button" class="btn sm" data-act="log-delete">Delete</button><button type="button" class="btn sm" data-act="log-delete-cancel">Keep</button></span></div>'
+        : '<button type="button" class="link" data-act="log-delete-ask">Delete this log</button>') : '');
+    box.innerHTML = '<div class="overlay" role="dialog" aria-modal="true" aria-label="' + (dl.editId ? 'Edit log' : 'Log tips') + '">' + win(dl.editId ? 'Edit log' : 'Log tips', body, { icon: ICON.cash, close: 'log-close' }) + '</div>';
+    refreshPreview();
+  }
+  function candidate() {
+    const d = readDraft();
+    const total = parseEuro(d.total);
+    const logs = sortLogs(state.day && state.day.logs).filter((l) => l.id !== state.dialog.editId);
+    const cand = { id: '__cand', time: d.time, total, bar: barOrder(d.bar), glasses: d.glasses || null };
+    let error = null;
+    if (!d.total) error = 'Enter the LS Pay total.';
+    else if (isNaN(total)) error = 'Enter the total as a number, like 42,45.';
+    else if (!d.time) error = 'Enter the time.';
+    else if (logs.some((l) => l.time === d.time)) error = 'There is already a log at ' + d.time + '. Change the time or edit that log instead.';
+    let iv = null, r = null;
+    if (!error) {
+      r = computeDay([...logs, cand], dayRules(state.day));
+      const idx = r.intervals.findIndex((i) => i.log.id === '__cand'); iv = r.intervals[idx];
+      const next = r.intervals[idx + 1];
+      if (iv.error) error = 'The total can’t be lower than the previous log (' + euro(iv.log.total - iv.delta) + ' €).';
+      else if (next && next.error) error = 'The total can’t be higher than the next log at ' + next.log.time + ' (' + euro(next.log.total) + ' €).';
+      else if (iv.delta > 0 && !cand.bar.filter((id) => id !== cand.glasses).length) error = 'Tick at least one bar person, or the bar share has no one to go to.';
+    }
+    return { cand, error, iv, r };
+  }
+  function barOrder(ids) { return state.roster.filter((p) => ids.includes(p.id)).map((p) => p.id); }
+  function refreshPreview() {
+    if (!state.dialog) return;
+    const box = $('#log-preview'); if (!box) return;
+    const { cand, error, iv } = candidate();
+    const legend = $('#bar-legend');
+    if (legend) { const logs = sortLogs(state.day && state.day.logs).filter((l) => l.id !== state.dialog.editId && l.time < cand.time); const pl = logs[logs.length - 1]; legend.textContent = 'Bar, ' + (pl ? pl.time : 'start') + ' – ' + (cand.time || '…'); }
+    $('#log-save').disabled = !!error || !canWrite();
+    if (error) { box.innerHTML = $('#log-total').value ? '<div class="err">' + esc(error) + '</div>' : ''; return; }
+    const rules = dayRules(state.day);
+    const barIds = cand.bar.filter((id) => id !== cand.glasses);
+    let html = '<div class="info num"><div class="row">' + ICON.info + '<span class="b">+' + euro(iv.delta) + ' € since ' + esc(iv.from || 'the start') + '</span></div>';
+    if (cand.glasses) html += '<div class="row between"><span>1. Glasses (' + esc(rules.glassesPct) + '%) · ' + esc(nameOf(cand.glasses)) + '</span><span>' + euro(iv.glassesC) + '</span></div>';
+    html += '<div class="row between"><span>' + (cand.glasses ? '2. ' : '') + 'Prep pot (' + esc(rules.prepPct) + '%' + (cand.glasses ? ' of the rest' : '') + ')</span><span>' + euro(iv.prepC) + '</span></div>';
+    html += '<div style="border-top:1px dotted var(--ink); padding-top:4px" class="b">' + (cand.glasses ? '3. ' : '') + 'Bar, ' + euro(iv.barC) + ' ÷ ' + barIds.length + '</div>';
+    html += '<div class="grid2" style="gap:2px 16px">' + barIds.map((id) => '<div class="row between"><span>' + esc(nameOf(id)) + '</span><span>' + euro(iv.shares[id] || 0) + '</span></div>').join('') + '</div></div>';
+    box.innerHTML = html;
+  }
+
+  /* ---------- PDF ---------- */
+  async function makePdf() {
+    const J = window.jspdf && window.jspdf.jsPDF;
+    if (!J) { showToast('The PDF tool didn’t load. Check your connection and reload the page.'); return; }
+    const dl = state.downloads || (window.claude && window.claude.use ? await window.claude.use('downloads') : null);
+    if (!dl) { state.downloads = null; render(); return; }
+    state.pdfBusy = true; render();
+    try {
+      const day = state.day; const logs = sortLogs(day && day.logs); const rules = dayRules(day); const r = computeDay(logs, rules);
+      const approvals = (day && day.approvals) || {}; const co = state.settings.company;
+      const doc = new J({ unit: 'mm', format: 'a4' });
+      const L = 18, W = 174; let y = 18;
+      doc.setLineWidth(0.3); doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
+      const cell = (x, yy, w, h, text, o) => {
+        o = o || {};
+        if (o.fill) { doc.setFillColor(o.fill); doc.rect(x, yy, w, h, 'F'); }
+        doc.rect(x, yy, w, h);
+        if (text !== undefined && text !== '') {
+          doc.setFont('helvetica', o.bold ? 'bold' : 'normal'); doc.setFontSize(o.size || 10);
+          const t = doc.splitTextToSize(String(text), w - 4)[0];
+          if (o.align === 'right') doc.text(t, x + w - 2, yy + h / 2 + 1.3, { align: 'right' }); else doc.text(t, x + 2, yy + h / 2 + 1.3);
+        }
+      };
+      const ensure = (h) => { if (y + h > 280) { doc.addPage(); y = 18; } };
+      // header
+      const lw = 74, rw = W - lw;
+      cell(L, y, lw, 9, co.name || ''); cell(L, y + 9, lw, 9, co.street || ''); cell(L, y + 18, lw, 9, [co.postcode, co.city].filter(Boolean).join(' '));
+      cell(L + lw, y, rw, 18, ''); doc.setFont('helvetica', 'normal'); doc.setFontSize(15); doc.text('Auszahlung Trinkgeld von Kartenzahlung', L + lw + 3, y + 11);
+      cell(L + lw, y + 18, rw - 40, 9, 'Datum / Quittungsnummer'); cell(L + W - 40, y + 18, 40, 9, deDate(state.date), { bold: true });
+      y += 27 + 8;
+      // reports
+      const c1 = W - 30 - 40;
+      cell(L, y, c1, 8, 'LS Pay Trinkgeld laut Bericht', { bold: true, fill: '#F1F1F1' }); cell(L + c1, y, 30, 8, 'Uhrzeit', { bold: true, fill: '#F1F1F1' }); cell(L + c1 + 30, y, 40, 8, 'EUR,Cent', { bold: true, fill: '#F1F1F1', align: 'right' }); y += 8;
+      logs.forEach((l) => { ensure(8); cell(L, y, c1, 8, 'Bericht'); cell(L + c1, y, 30, 8, l.time); cell(L + c1 + 30, y, 40, 8, euro(l.total), { align: 'right' }); y += 8; });
+      ensure(8); cell(L, y, c1 + 30, 8, 'SUMME', { bold: true, align: 'right' }); cell(L + c1 + 30, y, 40, 8, euro(r.total), { bold: true, align: 'right' }); y += 8 + 8;
+      // payout
+      ensure(20); doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.text('Trinkgeld wie folgt ausgezahlt an:', L, y); y += 3;
+      const a = 48, b = W - 48 - 26 - 40, c = 26, d = 40;
+      cell(L, y, a, 8, 'Name und Schicht', { bold: true, fill: '#F1F1F1' }); cell(L + a, y, b, 8, 'Berechnung', { bold: true, fill: '#F1F1F1' }); cell(L + a + b, y, c, 8, 'Betrag', { bold: true, fill: '#F1F1F1', align: 'right' }); cell(L + a + b + c, y, d, 8, 'Bestätigt / erhalten', { bold: true, fill: '#F1F1F1' }); y += 8;
+      const section = (t) => { ensure(7); cell(L, y, W, 6, t, { bold: true, size: 8, fill: '#FAFAFA' }); y += 6; };
+      const prow = (p) => {
+        ensure(9);
+        const ap = approvals[p.id]; const ok = ap && ap.cents === p.total;
+        const parts = p.parts.map((pt) => pt.kind === 'glasses' ? pt.pct + ' % von ' + euro(pt.of) : euro(pt.cents)).join(' + ');
+        cell(L, y, a, 9, nameOf(p.id) + '  ' + (p.from ? p.from : 'Beginn') + '–' + (p.to || ''));
+        cell(L + a, y, b, 9, parts); cell(L + a + b, y, c, 9, euro(p.total), { bold: true, align: 'right' });
+        cell(L + a + b + c, y, d, 9, ok ? 'Bestätigt ' + timeOf(ap.at) : 'Offen'); y += 9;
+      };
+      const bar = r.people.filter((p) => p.bar), gl = r.people.filter((p) => !p.bar && p.glasses);
+      if (bar.length) { section('BAR'); bar.forEach(prow); }
+      if (gl.length) { section('GLÄSER'); gl.forEach(prow); }
+      section('PREP-TOPF'); ensure(9);
+      cell(L, y, a, 9, 'Rücklage Prep'); cell(L + a, y, b, 9, rules.prepPct + ' % nach Gläsern'); cell(L + a + b, y, c, 9, euro(r.prep), { bold: true, align: 'right' }); cell(L + a + b + c, y, d, 9, 'Wöchentlich'); y += 9;
+      if (r.unassigned) { ensure(9); cell(L, y, a + b, 9, 'Nicht zugeordnet'); cell(L + a + b, y, c, 9, euro(r.unassigned), { bold: true, align: 'right' }); cell(L + a + b + c, y, d, 9, ''); y += 9; }
+      const done = r.people.filter((p) => approvals[p.id] && approvals[p.id].cents === p.total).length;
+      ensure(9); cell(L, y, a + b, 9, 'SUMME', { bold: true, align: 'right' }); cell(L + a + b, y, c, 9, euro(r.total), { bold: true, align: 'right' }); cell(L + a + b + c, y, d, 9, done + ' von ' + r.people.length + ' bestätigt'); y += 9;
+      // footer
+      ensure(28); y = Math.max(y + 20, 262);
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(85);
+      const now = new Date(); doc.text('Erstellt mit Trinkgeld Split am ' + deDate(iso(now)) + ' um ' + nowTime(), L, y);
+      doc.setTextColor(0); doc.line(L + W - 80, y - 2, L + W, y - 2); doc.setFontSize(10); doc.text('ausgezahlt von', L + W - 80, y + 3);
+      const blob = doc.output('blob');
+      await dl.save({ filename: 'Trinkgeld ' + state.date + '.pdf', data: blob });
+      showToast('PDF saved.');
+    } catch (e) {
+      const code = e && e.code;
+      if (code === 'declined') showToast('PDF not saved.');
+      else if (code === 'rate_limited') showToast('A save is already waiting for an answer.');
+      else if (code === 'unavailable' || code === 'not_granted' || code === 'capability_disabled' || code === 'capability_removed') { state.downloads = null; }
+      else showToast('The PDF couldn’t be created. Try again.');
+    } finally { state.pdfBusy = false; render(); }
+  }
+
+  /* ---------- events ---------- */
+  document.addEventListener('click', async (ev) => {
+    const el = ev.target.closest('[data-act]'); if (!el) return;
+    const act = el.dataset.act, id = el.dataset.id;
+    if (el.tagName === 'SELECT') return;
+    switch (act) {
+      case 'tab': state.tab = el.dataset.tab; state.editStaff = null; state.undoFor = null; render(); window.scrollTo(0, 0); break;
+      case 'day': state.date = addDays(state.date, Number(el.dataset.n)); state.day = null; state.undoFor = null; subscribeDay(); syncWeekToDay(); render(); break;
+      case 'day-today': state.date = todayIso(); state.day = null; subscribeDay(); syncWeekToDay(); render(); break;
+      case 'goto-day': state.date = el.dataset.date; state.day = null; subscribeDay(); state.tab = 'payout'; render(); window.scrollTo(0, 0); break;
+      case 'week': state.weekMon = addDays(state.weekMon, Number(el.dataset.n)); state.weekDays = []; state.weekDoc = null; subscribeWeek(); render(); break;
+      case 'log-new': openLog(null); break;
+      case 'log-edit': openLog(id); break;
+      case 'log-close': state.dialog = null; renderDialog(); break;
+      case 'log-delete-ask': readDraft(); state.confirmDelete = true; renderDialog(); break;
+      case 'log-delete-cancel': readDraft(); state.confirmDelete = false; renderDialog(); break;
+      case 'log-delete': { const eid = state.dialog.editId; state.dialog = null; renderDialog(); await guard(() => saveDay((cur) => { cur.logs = cur.logs.filter((l) => l.id !== eid); }), 'Log deleted.'); break; }
+      case 'log-save': {
+        const { cand, error } = candidate(); if (error) return;
+        const eid = state.dialog.editId;
+        const entry = { id: eid || genId(), time: cand.time, total: cand.total, bar: cand.bar, glasses: cand.glasses };
+        state.dialog = null; renderDialog();
+        await guard(() => saveDay((cur) => { if (eid) cur.logs = cur.logs.map((l) => (l.id === eid ? entry : l)); else cur.logs.push(entry); }), eid ? 'Log updated.' : 'Log saved.');
+        break;
+      }
+      case 'dlg-add': {
+        const nm = $('#dlg-new-name').value.trim(); const role = $('#dlg-new-role').value; if (!nm) { $('#dlg-new-name').focus(); return; }
+        readDraft(); const pid = genId();
+        if (role === 'bar') state.dialog.draft.bar.push(pid); else state.dialog.draft.glasses = pid;
+        state.roster = [...state.roster, { id: pid, name: nm, role, active: true }];
+        renderDialog();
+        await guard(() => saveRoster(state.roster), nm + ' added to the team.');
+        break;
+      }
+      case 'approve': {
+        const r = computeDay(state.day && state.day.logs, dayRules(state.day)); const p = r.byId[id]; if (!p) return;
+        await guard(() => saveDay((cur) => { cur.approvals[id] = { at: new Date().toISOString(), cents: p.total }; }));
+        break;
+      }
+      case 'undo-ask': state.undoFor = id; render(); break;
+      case 'undo-cancel': state.undoFor = null; render(); break;
+      case 'unapprove': state.undoFor = null; await guard(() => saveDay((cur) => { delete cur.approvals[id]; }), 'Approval removed.'); break;
+      case 'pdf': makePdf(); break;
+      case 'prep-approve': {
+        const wd = state.weekDoc || {}; const monId = wd.mon !== undefined ? wd.mon : state.settings.prepMon; const friId = wd.fri !== undefined ? wd.fri : state.settings.prepFri;
+        let pot = 0; state.weekDays.forEach((d) => { pot += computeDay(d.logs, dayRules(d)).prep; });
+        const shares = computeWeekPrep(pot, monId, friId);
+        const approvals = Object.assign({}, wd.approvals || {}, { [id]: { at: new Date().toISOString(), cents: shares[id] || 0 } });
+        await guard(() => saveWeek({ approvals, mon: monId || null, fri: friId || null }), 'Prep approved.');
+        break;
+      }
+      case 'toggle': state.open[el.dataset.key] = !state.open[el.dataset.key]; render(); break;
+      case 'staff-add': {
+        const inp = $('#new-name'); const nm = inp.value.trim(); const role = $('#new-role').value;
+        if (!nm) { inp.focus(); return; }
+        inp.value = ''; state.open[role === 'bar' ? 'bar' : 'glasses'] = true;
+        await guard(() => saveRoster([...state.roster, { id: genId(), name: nm, role, active: true }]), nm + ' added.');
+        break;
+      }
+      case 'staff-edit': { state.editStaff = id; render(); const f = $('#edit-name'); if (f) f.focus(); break; }
+      case 'staff-cancel': state.editStaff = null; render(); break;
+      case 'staff-save': {
+        const nm = $('#edit-name').value.trim(); const role = $('#edit-role').value; if (!nm) { $('#edit-name').focus(); return; }
+        state.editStaff = null;
+        await guard(() => saveRoster(state.roster.map((p) => (p.id === id ? Object.assign({}, p, { name: nm, role }) : p))), 'Saved.');
+        break;
+      }
+      case 'staff-remove': state.editStaff = null; state.open.former = true; await guard(() => saveRoster(state.roster.map((p) => (p.id === id ? Object.assign({}, p, { active: false }) : p))), 'Moved to “No longer here”.'); break;
+      case 'staff-back': await guard(() => saveRoster(state.roster.map((p) => (p.id === id ? Object.assign({}, p, { active: true }) : p))), 'Back on the team.'); break;
+      case 'rules-save': {
+        const g = parseFloat(String($('#rule-glasses').value).replace(',', '.')), p = parseFloat(String($('#rule-prep').value).replace(',', '.'));
+        if (!(g >= 0 && g <= 100) || !(p >= 0 && p <= 100)) { showToast('Enter percentages between 0 and 100.'); return; }
+        await guard(() => saveSettings({ glassesPct: g, prepPct: p }), 'Tip rules saved.');
+        break;
+      }
+      case 'company-save':
+        await guard(() => saveSettings({ company: { name: $('#co-name').value.trim(), street: $('#co-street').value.trim(), postcode: $('#co-postcode').value.trim(), city: $('#co-city').value.trim() } }), 'Company details saved.');
+        break;
+    }
+  });
+  document.addEventListener('change', async (ev) => {
+    const el = ev.target;
+    if (el.closest('#dialog')) { if (el.name === 'bar') { const s = el.nextElementSibling; if (s) s.classList.toggle('b', el.checked); } refreshPreview(); return; }
+    if (el.dataset.act === 'week-prep') { await guard(() => saveWeek({ [el.dataset.key]: el.value || null }), 'Prep shift updated for this week.'); }
+    if (el.dataset.act === 'prep-default') { await guard(() => saveSettings({ [el.dataset.key]: el.value || null }), 'Usual prep person saved.'); }
+  });
+  document.addEventListener('input', (ev) => { if (ev.target.closest('#dialog') && (ev.target.id === 'log-total' || ev.target.id === 'log-time')) refreshPreview(); });
+  document.addEventListener('keydown', (ev) => {
+    if (ev.key === 'Escape' && state.dialog) { state.dialog = null; renderDialog(); }
+    if (ev.key === 'Enter' && ev.target.id === 'new-name') { ev.preventDefault(); $('[data-act="staff-add"]').click(); }
+  });
+  function syncWeekToDay() { const m = mondayOf(state.date); if (m !== state.weekMon) { state.weekMon = m; state.weekDays = []; state.weekDoc = null; subscribeWeek(); } }
+
+  /* ---------- start ---------- */
+  render();
+  (async () => {
+    let db = null;
+    try { db = window.claude && window.claude.use ? await window.claude.use('db') : null; } catch (e) { db = null; }
+    if (db) { store.db = db; store.mode = 'remote'; } else { store.loadLocal(); store.mode = 'local'; }
+    subscribeAll(); render();
+    try { state.downloads = window.claude && window.claude.use ? await window.claude.use('downloads') : null; } catch (e) { state.downloads = null; }
+    render();
+  })();
+})();
+</script>
+</body>
+</html>

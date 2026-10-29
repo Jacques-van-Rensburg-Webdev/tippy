@@ -6,6 +6,8 @@
 /* ---------- Reset ---------- */
 *, *::before, *::after { box-sizing: border-box; }
 html, body { height: 100%; }
+/* The page never scrolls sideways (a safety net: nothing should be wider than the screen). */
+html, body { overflow-x: clip; }
 body {
   margin: 0;
   background: var(--desk);

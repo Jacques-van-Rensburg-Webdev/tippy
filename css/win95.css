@@ -146,7 +146,11 @@
   border-color: var(--shadow) var(--hi) var(--hi) var(--shadow);
   border-radius: 0;
   box-shadow: inset var(--line) var(--line) 0 var(--ink);
+  font-size: var(--text-field);
 }
+/* Time field: without iPhone Safari's own style it shrinks to its column; value centred vertically */
+.input.time { -webkit-appearance: none; appearance: none; line-height: calc(var(--input-big) - var(--bevel) * 2); }
+.input.time::-webkit-date-and-time-value { margin: 0; text-align: left; line-height: calc(var(--input-big) - var(--bevel) * 2); }
 .input.money { height: var(--input-big); color: var(--red); font-size: var(--text-24); font-weight: var(--weight-bold); text-align: right; font-variant-numeric: tabular-nums; }
 .input.time { height: var(--input-big); color: var(--desk); font-size: var(--text-18); font-weight: var(--weight-bold); }
 select.input { padding: 0 var(--gap-6); }

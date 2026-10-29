@@ -103,6 +103,7 @@
   --text-13: 13px;
   --text-14: 14px;
   --text-15: 15px;
+  --text-field: 16px;  /* text in fields: iPhone Safari zooms the page in on anything smaller */
   --text-17: 17px;
   --text-18: 18px;
   --text-24: 24px;

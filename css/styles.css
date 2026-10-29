@@ -1,168 +1,82 @@
+/* Reset, the app shell, the 4-column grid and the grid overlay.
+   Shell, as in the reference: windows in one column on the teal desktop (.app-content), the
+   taskbar fixed at the bottom (.app-tabbar). .app-header only keeps clear of the notch.
+   Windows and controls: win95.css. Screen details: screens.css. */
+
 /* ---------- Reset ---------- */
 *, *::before, *::after { box-sizing: border-box; }
-* { margin: 0; }
-html { -webkit-text-size-adjust: 100%; }
+html, body { height: 100%; }
 body {
+  margin: 0;
+  background: var(--desk);
+  color: var(--ink);
   font-family: var(--font-family);
-  font-size: var(--text-base);
-  line-height: var(--leading-base);
-  color: var(--color-text);
-  background: var(--color-surface);
+  font-size: var(--text-15);
+  line-height: var(--leading);
+  -webkit-text-size-adjust: 100%;
 }
-img, svg { display: block; max-width: 100%; }
-button, input, textarea, select { font: inherit; color: inherit; }
-button { cursor: pointer; }
+button, input, select { font: inherit; color: inherit; }
+p, h1, h2, h3 { margin: 0; }
+img, svg { display: block; }
 
-/* ---------- App shell (zones) ---------- */
-/* On desktop the app is centred at phone width so it matches the frame. */
-.app {
-  position: relative;
-  max-width: var(--frame-width);
-  min-height: 100dvh;
-  margin-inline: auto;
-  background: var(--color-bg);
-  display: flex;
-  flex-direction: column;
+.visually-hidden {
+  position: absolute !important;
+  width: var(--line);
+  height: var(--line);
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
-.app-header {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  padding-top: var(--safe-top);
-  background: var(--color-bg);
-  box-shadow: inset 0 -1px 0 var(--color-border);
-}
-.app-header-inner {
-  height: var(--zone-header);
-  padding-inline: var(--grid-margin);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-1);
-}
-.app-title {
-  font-size: var(--text-lg);
-  line-height: var(--leading-lg);
-  font-weight: var(--weight-bold);
-}
+/* ---------- Shell ---------- */
+.app-header { height: var(--safe-top); }
 
 .app-content {
-  flex: 1;
-  padding-block: var(--space-3);
-}
-
-.app-tabbar {
-  position: sticky;
-  bottom: 0;
-  z-index: 10;
-  padding-bottom: var(--safe-bottom);
-  background: var(--color-bg);
-  box-shadow: inset 0 1px 0 var(--color-border);
-}
-.app-tabbar-inner {
-  height: var(--zone-tabbar);
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 1fr;
-}
-.tab {
+  max-width: var(--column-max);
+  margin: 0 auto;
+  padding-top: var(--gap-16);
+  padding-bottom: calc(var(--taskbar-clearance) + var(--safe-bottom));
+  padding-left: max(var(--gap-16), var(--safe-left));
+  padding-right: max(var(--gap-16), var(--safe-right));
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-0-5);
-  min-height: var(--size-tap);
-  font-size: var(--text-xs);
-  line-height: var(--leading-xs);
-  color: var(--color-text-muted);
-  text-decoration: none;
+  gap: var(--gap-14);
 }
-.tab[aria-current="page"] { color: var(--color-primary); }
-.tab-icon { width: var(--size-icon); height: var(--size-icon); }
 
-/* ---------- 4-column grid ---------- */
+/* The taskbar */
+.app-tabbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  background: var(--face);
+  border-top: var(--bevel) solid var(--hi);
+  box-shadow: 0 calc(var(--line) * -1) 0 var(--hi2);
+  padding-top: var(--gap-5);
+  padding-bottom: calc(var(--gap-6) + var(--safe-bottom));
+  padding-left: max(var(--gap-16), var(--safe-left));
+  padding-right: max(var(--gap-16), var(--safe-right));
+}
+.app-tabbar-inner {
+  max-width: var(--column-max);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--gap-4);
+}
+
+/* ---------- 4-column grid (starter kit) ---------- */
 .grid {
   display: grid;
   grid-template-columns: repeat(var(--grid-columns), minmax(0, 1fr));
   column-gap: var(--grid-gutter);
   row-gap: var(--space-2);
-  padding-inline: var(--grid-margin);
 }
 .span-1 { grid-column: span 1; }
 .span-2 { grid-column: span 2; }
 .span-3 { grid-column: span 3; }
 .span-4 { grid-column: 1 / -1; }
-.start-1 { grid-column-start: 1; }
-.start-2 { grid-column-start: 2; }
-.start-3 { grid-column-start: 3; }
-.start-4 { grid-column-start: 4; }
-.full-bleed { grid-column: 1 / -1; margin-inline: calc(var(--grid-margin) * -1); }
-
-/* Vertical spacing helpers (8pt scale) */
-.mt-1 { margin-top: var(--space-1); }
-.mt-2 { margin-top: var(--space-2); }
-.mt-3 { margin-top: var(--space-3); }
-.mt-4 { margin-top: var(--space-4); }
-.mt-6 { margin-top: var(--space-6); }
-.stack-1 { display: flex; flex-direction: column; gap: var(--space-1); }
-.stack-2 { display: flex; flex-direction: column; gap: var(--space-2); }
-
-/* ---------- Typography ---------- */
-.text-xs   { font-size: var(--text-xs);   line-height: var(--leading-xs); }
-.text-sm   { font-size: var(--text-sm);   line-height: var(--leading-sm); }
-.text-base { font-size: var(--text-base); line-height: var(--leading-base); }
-.text-lg   { font-size: var(--text-lg);   line-height: var(--leading-lg); }
-.text-xl   { font-size: var(--text-xl);   line-height: var(--leading-xl); }
-.text-muted { color: var(--color-text-muted); }
-.text-bold  { font-weight: var(--weight-bold); }
-
-/* ---------- Components ---------- */
-.card {
-  background: var(--color-surface);
-  border-radius: var(--radius-md);
-  padding: var(--space-2);
-}
-
-.button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-1);
-  height: var(--size-button);
-  padding-inline: var(--space-3);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  background: var(--color-bg);
-  font-weight: var(--weight-bold);
-}
-.button-primary {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-  color: var(--color-on-primary);
-}
-.button-sm { height: var(--size-button-sm); padding-inline: var(--space-2); }
-.button-block { width: 100%; }
-
-.icon-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--size-tap);
-  height: var(--size-tap);
-  border: none;
-  background: none;
-  border-radius: var(--radius-full);
-}
-
-.input {
-  width: 100%;
-  height: var(--size-input);
-  padding-inline: var(--space-2);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  background: var(--color-bg);
-}
 
 /* ---------- Grid overlay (press G or add ?grid to the URL) ---------- */
 .grid-overlay {
@@ -175,7 +89,7 @@ button { cursor: pointer; }
 .grid-overlay.is-visible { display: block; }
 .grid-overlay-frame {
   position: relative;
-  max-width: var(--frame-width);
+  max-width: var(--column-max);
   height: 100%;
   margin-inline: auto;
 }
@@ -192,8 +106,7 @@ button { cursor: pointer; }
   display: flex;
   justify-content: center;
   padding-top: calc(var(--overlay-numbers-top, 0px) + var(--space-1));
-  font-size: var(--text-xs);
-  line-height: var(--leading-xs);
+  font-size: var(--text-12);
   font-weight: var(--weight-bold);
   color: var(--overlay-text);
 }
@@ -215,14 +128,10 @@ button { cursor: pointer; }
   left: 0;
   bottom: 0;
   padding-inline: var(--space-0-5);
-  background: var(--color-bg);
-  border-radius: 0 var(--radius-sm) 0 0;
-  font-size: var(--text-xs);
-  line-height: var(--leading-xs);
+  background: var(--face);
+  font-size: var(--text-12);
   color: var(--overlay-text);
 }
-.grid-overlay-zone.is-bottom .grid-overlay-label {
-  top: auto;
-  bottom: 100%;
-  border-radius: 0 var(--radius-sm) 0 0;
-}
+.grid-overlay-zone.is-bottom .grid-overlay-label { top: auto; bottom: 100%; }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }

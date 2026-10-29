@@ -1,0 +1,51 @@
+/* Screen details that the reference wrote as inline styles: list column widths, small stacks and
+   the rows of Today, Payout, Week, Staff and the log dialog. */
+
+/* ---------- Helpers ---------- */
+.stack { display: flex; flex-direction: column; }
+.gap-4 { gap: var(--gap-4); }
+.gap-8 { gap: var(--gap-8); }
+.gap-10 { gap: var(--gap-10); }
+.block { display: block; }
+.wrap { flex-wrap: wrap; }
+.end { justify-content: flex-end; }
+.full { grid-column: 1 / -1; }
+
+/* ---------- List columns ---------- */
+.cols-logs { grid-template-columns: var(--col-time) var(--col-added) minmax(0, 1fr); }
+.cols-payout { grid-template-columns: minmax(0, 1fr) var(--col-amount) var(--col-status); }
+.cols-week { grid-template-columns: minmax(0, 1fr) var(--col-tips) var(--col-prep); }
+
+/* ---------- Today ---------- */
+.on-shift { gap: var(--gap-6) var(--gap-10); }
+.on-shift-glasses { margin-top: var(--gap-6); padding-top: var(--gap-6); border-top: var(--line) dotted var(--shadow); }
+.lower { color: var(--red); }
+
+/* ---------- Week: prep shifts ---------- */
+.prep-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--col-amount);
+  gap: var(--gap-6) var(--gap-8);
+  align-items: center;
+  padding: var(--gap-6) 0;
+  border-bottom: var(--line) dotted var(--shadow);
+}
+.prep-amount { align-self: end; padding-bottom: var(--gap-10); }
+.prep-status { grid-column: 1 / -1; }
+.prep-note { margin-top: var(--gap-6); }
+
+/* ---------- Staff ---------- */
+.cols-add { display: grid; grid-template-columns: minmax(0, 1fr) var(--col-role) var(--col-add); gap: var(--gap-6); }
+.cols-address { display: grid; grid-template-columns: var(--col-postcode) minmax(0, 1fr); gap: var(--gap-8); }
+.staff-edit { display: flex; flex-direction: column; gap: var(--gap-8); padding: var(--gap-8) 0; border-bottom: var(--line) dotted var(--shadow); }
+.person-name { min-width: 0; }
+.kids-empty { padding: var(--gap-10) 0; }
+.prep-kids { gap: var(--gap-8); padding-top: var(--gap-4); }
+
+/* ---------- Log dialog ---------- */
+.cols-log { display: grid; grid-template-columns: minmax(0, 1fr) var(--col-log-time); gap: var(--gap-10); }
+.cols-new { display: grid; grid-template-columns: minmax(0, 1fr) var(--col-new-role) var(--col-new-add); gap: var(--gap-6); margin-top: var(--gap-6); }
+.cols-save { display: grid; grid-template-columns: minmax(0, var(--col-save)) minmax(0, 1fr); gap: var(--gap-10); }
+.add-new summary { min-height: var(--summary-height); display: flex; align-items: center; cursor: pointer; }
+.preview-bar { padding-top: var(--gap-4); border-top: var(--line) dotted var(--ink); }
+.preview-shares { gap: var(--gap-2) var(--gap-16); }

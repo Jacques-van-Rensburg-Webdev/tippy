@@ -1,17 +1,25 @@
-/* Design tokens. Every value used in styles.css comes from here.
-   Spacing follows the 8pt scale in design-grid-rules.md. */
+/* Design tokens. Every value used in the CSS files comes from here.
+   Tippy matches its reference design (docs/design/trinkgeld-split.html) exactly, so its sizes,
+   spacing and text sizes are the reference's own; they were agreed in task/todo.md (decision 3).
+   The starter kit's grid tokens stay for the grid overlay. */
 
 :root {
-  /* Frame */
+  /* Frame and grid (starter kit; used by the grid overlay) */
   --frame-width: 390px;
   --frame-height: 844px;
-
-  /* Grid */
   --grid-columns: 4;
   --grid-margin: 16px;
   --grid-gutter: 16px;
+  --zone-status: 47px;
+  --zone-header: 56px;
+  --zone-tabbar: 56px;
+  --zone-safe-bottom: 34px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
 
-  /* Spacing (8pt scale) */
+  /* Spacing (8pt scale, starter kit) */
   --space-0-5: 4px;
   --space-1: 8px;
   --space-2: 16px;
@@ -20,68 +28,123 @@
   --space-6: 48px;
   --space-8: 64px;
 
-  /* Zones */
-  --zone-status: 47px;
-  --zone-header: 56px;
-  --zone-tabbar: 56px;
-  --zone-safe-bottom: 34px;
-  --safe-top: env(safe-area-inset-top, 0px);
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  /* Reference spacing */
+  --gap-1: 1px;
+  --gap-2: 2px;
+  --gap-3: 3px;
+  --gap-4: 4px;
+  --gap-5: 5px;
+  --gap-6: 6px;
+  --gap-8: 8px;
+  --gap-10: 10px;
+  --gap-12: 12px;
+  --gap-14: 14px;
+  --gap-16: 16px;
+  --gap-20: 20px;
+  --gap-17: 17px;
 
-  /* Component sizes */
-  --size-tap: 48px;
-  --size-button: 48px;
-  --size-button-sm: 32px;
-  --size-input: 48px;
-  --size-row: 56px;
-  --size-row-2: 72px;
-  --size-icon: 24px;
-  --size-icon-sm: 16px;
-  --size-avatar: 40px;
-  --size-avatar-sm: 32px;
-  --size-avatar-lg: 64px;
+  /* Layout */
+  --column-max: 480px;          /* the window column */
+  --taskbar-clearance: 96px;    /* space kept under the windows for the taskbar */
+  --toast-bottom: 70px;
+  --overlay-alpha-bg: rgba(15, 61, 69, 0.82);
 
-  /* Radius */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-full: 999px;
+  /* Sizes */
+  --line: 1px;
+  --bevel: 2px;                 /* the 2px bevel borders */
+  --title-height: 30px;
+  --title-button-width: 26px;
+  --title-button-height: 24px;
+  --button-height: 44px;
+  --button-big: 50px;
+  --button-small: 36px;
+  --button-approve-min: 96px;
+  --input-height: 44px;
+  --input-big: 50px;
+  --check-size: 22px;
+  --check-mark: 12px;
+  --radio-dot: 8px;
+  --mini-check: 18px;
+  --tree-box: 18px;
+  --tree-indent: 17px;
+  --option-height: 44px;
+  --person-height: 48px;
+  --node-height: 44px;
+  --link-height: 32px;
+  --approved-height: 40px;
+  --summary-height: 36px;
+  --tab-height: 46px;
+  --progress-height: 22px;
+  --progress-stripe: 11px;
+  --progress-step: 14px;
+  --icon: 16px;
+  --icon-large: 20px;
+  --dither: 2px;
 
-  /* Typography: size / line height */
-  --font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --text-xs: 12px;   --leading-xs: 16px;
-  --text-sm: 14px;   --leading-sm: 20px;
-  --text-base: 16px; --leading-base: 24px;
-  --text-lg: 20px;   --leading-lg: 28px;
-  --text-xl: 28px;   --leading-xl: 36px;
+  /* List columns (the reference's grid widths) */
+  --col-time: 56px;
+  --col-added: 76px;
+  --col-amount: 70px;
+  --col-status: 112px;
+  --col-tips: 86px;
+  --col-prep: 76px;
+  --col-role: 108px;
+  --col-add: 70px;
+  --col-log-time: 110px;
+  --col-new-role: 100px;
+  --col-new-add: 64px;
+  --col-postcode: 110px;
+  --col-save: 1.4fr;
+
+  /* Typography */
+  --font-family: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --text-11: 11px;
+  --text-12: 12px;
+  --text-13: 13px;
+  --text-14: 14px;
+  --text-15: 15px;
+  --text-17: 17px;
+  --text-18: 18px;
+  --text-24: 24px;
+  --text-30: 30px;
+  --text-40: 40px;
+  --leading: 1.35;
+  --leading-display: 1.15;
+  --leading-none: 1;
+  --tracking-section: 0.06em;
   --weight-regular: 400;
-  --weight-bold: 600;
+  --weight-bold: 700;
 
-  /* Colors */
-  --color-bg: #ffffff;
-  --color-surface: #f4f4f5;
-  --color-text: #18181b;
-  --color-text-muted: #71717a;
-  --color-border: #e4e4e7;
-  --color-primary: #2563eb;
-  --color-on-primary: #ffffff;
-  --color-danger: #dc2626;
+  /* Colours (the reference's palette; one look in both light and dark system settings) */
+  --desk: #0F3D45;
+  --face: #E9DFCF;
+  --hi: #FFFFFF;
+  --hi2: #F7F1E6;
+  --shadow: #8C8270;
+  --ink: #1B1B1B;
+  --paper: #FBF6EE;
+  --white: #FFFFFF;
+  --red: #C9302C;
+  --red-dk: #8E1B18;
+  --red-xdk: #5E1210;
+  --red-lt: #F08A85;
+  --green: #2E9E4F;
+  --green-ink: #1E6B35;
+  --yellow: #F6B70F;
+  --info: #FCE7A6;
+  --blue: #2C7FB8;
+  --muted: #4A443B;
+  --warn: #8A4B00;
+  --sel: #0F3D45;
+  --err-bg: #F9D9D6;
+  --tab-dither: #F4ECE1;
 
-  /* Grid overlay */
+  /* Starter kit colour names (grid overlay) mapped onto the palette */
+  --color-bg: var(--face);
+  --color-text: var(--ink);
   --overlay-column: rgba(216, 90, 48, 0.12);
   --overlay-line: rgba(216, 90, 48, 0.5);
   --overlay-text: #993c1d;
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg: #09090b;
-    --color-surface: #18181b;
-    --color-text: #fafafa;
-    --color-text-muted: #a1a1aa;
-    --color-border: #27272a;
-    --overlay-column: rgba(240, 153, 123, 0.14);
-    --overlay-line: rgba(240, 153, 123, 0.5);
-    --overlay-text: #f0997b;
-  }
+  color-scheme: light;
 }

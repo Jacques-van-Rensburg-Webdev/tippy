@@ -4,9 +4,6 @@
 const STORAGE_KEY = 'grid-overlay-visible';
 
 function buildOverlay() {
-  const header = document.querySelector('.app-header');
-  const tabbar = document.querySelector('.app-tabbar');
-
   const overlay = document.createElement('div');
   overlay.className = 'grid-overlay';
   overlay.setAttribute('aria-hidden', 'true');
@@ -39,7 +36,10 @@ function buildOverlay() {
     frame.append(zone);
   };
 
+  // The zones are looked up each time, as the app draws them.
   const update = () => {
+    const header = document.querySelector('.app-header');
+    const tabbar = document.querySelector('.app-tabbar');
     frame.querySelectorAll('.grid-overlay-zone').forEach((z) => z.remove());
     if (header) {
       const h = header.getBoundingClientRect();
@@ -84,7 +84,7 @@ export function initGridOverlay() {
   };
 
   document.addEventListener('keydown', (event) => {
-    const typing = event.target.closest('input, textarea, select, [contenteditable]');
+    const typing = event.target.closest?.('input, textarea, select, [contenteditable]');
     if (typing || event.metaKey || event.ctrlKey || event.altKey) return;
     if (event.key === 'g' || event.key === 'G') {
       visible = !visible;

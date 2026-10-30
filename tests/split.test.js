@@ -42,6 +42,18 @@ test('shift times: from the log before they first appear to their last log', () 
   assert.deepEqual(r.people.map((p) => p.id), ['a', 'b'], 'sorted by start ("start" first)');
 });
 
+test('before prep: bar staff share the rest before the prep cut; glasses money has no cut', () => {
+  const r = computeDay([log('20:00', 10000, ['a', 'b'], 'g')], RULES);
+  assert.deepEqual([r.byId.a.beforePrep, r.byId.a.prepCut, r.byId.a.total], [4500, 225, 4275]);
+  assert.deepEqual([r.byId.g.beforePrep, r.byId.g.prepCut], [1000, 0]);
+});
+
+test('before prep: the prep cuts add up to the prep pot, cent for cent', () => {
+  const r = computeDay([log('20:00', 10001, ['a', 'b'], 'g'), log('22:00', 13001, ['a', 'b', 'c'])], RULES);
+  assert.equal(r.people.reduce((s, p) => s + p.prepCut, 0), r.prep);
+  r.people.forEach((p) => assert.equal(p.beforePrep - p.prepCut, p.total));
+});
+
 test('a glasses runner ticked as bar too is only counted as glasses', () => {
   const r = computeDay([log('20:00', 10000, ['a', 'g'], 'g')], RULES);
   assert.equal(r.byId.g.bar, false);

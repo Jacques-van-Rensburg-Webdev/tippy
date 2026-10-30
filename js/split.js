@@ -8,6 +8,8 @@
 //               (the glasses runner is never counted as bar staff in the same log)
 // A total lower than the one before is an error and that interval is skipped.
 // Bar money with nobody ticked is "unassigned".
+// Each person also gets beforePrep (their share before the prep cut; the glasses runner's money
+// has no prep taken from it) and prepCut (beforePrep - total). The prep cuts add up to the prep pot.
 
 // Splits `cents` evenly; the first ones get the leftover cents.
 export function splitEven(cents, ids) {
@@ -24,7 +26,8 @@ export function sortLogs(logs) {
   return [...(logs || [])].sort((a, b) => (a.time < b.time ? -1 : a.time > b.time ? 1 : 0));
 }
 
-// -> { intervals, people (sorted by when they started), byId, prep, unassigned, glassesTotal,
+// -> { intervals, people (sorted by when they started, each with total, beforePrep and prepCut),
+//      byId, prep, unassigned, glassesTotal,
 //      total (the last log's total), paid (sum of everyone's share) }
 export function computeDay(logs, rules) {
   const gp = Number(rules.glassesPct) || 0;
@@ -37,7 +40,7 @@ export function computeDay(logs, rules) {
   let prep = 0;
   let unassigned = 0;
   let glassesTotal = 0;
-  const person = (id) => (people[id] = people[id] || { id, total: 0, parts: [], from: undefined, to: null, glasses: false, bar: false });
+  const person = (id) => (people[id] = people[id] || { id, total: 0, beforePrep: 0, parts: [], from: undefined, to: null, glasses: false, bar: false });
 
   for (const log of sorted) {
     const delta = log.total - prev;
@@ -57,10 +60,12 @@ export function computeDay(logs, rules) {
       const barIds = (log.bar || []).filter((id) => id !== log.glasses);
       if (barIds.length) {
         iv.shares = splitEven(bar, barIds);
+        const before = splitEven(rest, barIds);
         for (const id of barIds) {
           const pr = person(id);
           pr.bar = true;
           pr.total += iv.shares[id];
+          pr.beforePrep += before[id];
           pr.parts.push({ cents: iv.shares[id], kind: 'bar' });
           if (pr.from === undefined) pr.from = prevTime;
           pr.to = log.time;
@@ -72,6 +77,7 @@ export function computeDay(logs, rules) {
         const pr = person(log.glasses);
         pr.glasses = true;
         pr.total += g;
+        pr.beforePrep += g;
         pr.parts.push({ cents: g, kind: 'glasses', of: delta, pct: gp });
         if (pr.from === undefined) pr.from = prevTime;
         pr.to = log.time;
@@ -82,6 +88,7 @@ export function computeDay(logs, rules) {
     prevTime = log.time;
   }
 
+  Object.values(people).forEach((pr) => { pr.prepCut = pr.beforePrep - pr.total; });
   const list = Object.values(people).sort((a, b) => {
     const fa = a.from || '';
     const fb = b.from || '';

@@ -1,5 +1,5 @@
 // Payout: the day's totals and warnings, "N of M approved", each person's amount with how it was
-// worked out and Approve (Undo; "Amount changed" if it moved after approving), the prep pot, and
+// worked out (and its amount before the prep cut) and Approve (Undo; "Amount changed" if it moved after approving), the prep pot, and
 // Save as PDF.
 
 import { computeDay } from '../split.js';
@@ -31,7 +31,9 @@ function personRows(people, approvals) {
   return people.map((p) => {
     const shift = `${p.from ? p.from : 'start'}–${p.to || ''}`;
     return '<div class="lrow cols-payout">'
-      + `<div class="stack"><b>${esc(nameOf(p.id))}</b><span class="xs muted">${esc(shift)} · ${esc(partsText(p))}</span></div>`
+      + `<div class="stack"><b>${esc(nameOf(p.id))}</b><span class="xs muted">${esc(shift)} · ${esc(partsText(p))}</span>`
+      + (p.prepCut ? `<span class="xs">Before prep ${euro(p.beforePrep)} − prep ${euro(p.prepCut)}</span>` : '')
+      + '</div>'
       + `<span class="num b right">${euro(p.total)}</span>`
       + `<div>${status(p, approvals)}</div></div>`;
   }).join('');

@@ -99,16 +99,24 @@ export function buildPayoutPdf({ date, company, logs, rules, approvals, nameOf, 
     cell(L, y, W, 6, title, { bold: true, size: 8, fill: GREY_SECTION });
     y += 6;
   };
+  // A row with a prep cut is taller: the Berechnung gets a second line "vor Prep … − Prep …".
   const row = (p) => {
-    ensure(9);
+    const h = p.prepCut ? 13 : 9;
+    ensure(h);
     const ap = approvals[p.id];
     const ok = ap && ap.cents === p.total;
     const parts = p.parts.map((pt) => (pt.kind === 'glasses' ? `${pt.pct} % von ${euro(pt.of)}` : euro(pt.cents))).join(' + ');
-    cell(L, y, a, 9, `${nameOf(p.id)}  ${p.from ? p.from : 'Beginn'}–${p.to || ''}`);
-    cell(L + a, y, b, 9, parts);
-    cell(L + a + b, y, c, 9, euro(p.total), { bold: true, align: 'right' });
-    cell(L + a + b + c, y, d, 9, ok ? `Bestätigt ${timeOf(ap.at)}` : 'Offen');
-    y += 9;
+    cell(L, y, a, h, `${nameOf(p.id)}  ${p.from ? p.from : 'Beginn'}–${p.to || ''}`);
+    if (p.prepCut) {
+      cell(L + a, y, b, h, '');
+      text(L + a + 2, y + 5, fitText(parts, (b - 4) * MM, 10));
+      text(L + a + 2, y + 10, fitText(`vor Prep ${euro(p.beforePrep)} − Prep ${euro(p.prepCut)}`, (b - 4) * MM, 8), { size: 8 });
+    } else {
+      cell(L + a, y, b, h, parts);
+    }
+    cell(L + a + b, y, c, h, euro(p.total), { bold: true, align: 'right' });
+    cell(L + a + b + c, y, d, h, ok ? `Bestätigt ${timeOf(ap.at)}` : 'Offen');
+    y += h;
   };
   const bar = r.people.filter((p) => p.bar);
   const glasses = r.people.filter((p) => !p.bar && p.glasses);

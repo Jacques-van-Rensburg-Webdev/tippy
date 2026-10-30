@@ -23,14 +23,19 @@ function onShift(last) {
   return `<div class="grid2 on-shift">${people}</div>${glasses}`;
 }
 
+// "÷ 2 = 25,00": what was added, divided by the bar staff ticked (the glasses runner isn't counted).
+export const perHead = (delta, n) => (n ? `÷ ${n} = ${euro(Math.round(delta / n))}` : '');
+
 function logRows(r) {
   return '<div class="sunken list"><div class="lh cols-logs"><span>Time</span><span>Added</span><span>Shared by</span></div>'
     + r.intervals.slice().reverse().map((iv) => {
-      const who = (iv.log.bar || []).filter((id) => id !== iv.log.glasses).map(nameOf).join(', ');
+      const barIds = (iv.log.bar || []).filter((id) => id !== iv.log.glasses);
+      const who = barIds.map(nameOf).join(', ');
+      const each = iv.error ? '' : perHead(iv.delta, barIds.length);
       const glasses = iv.log.glasses ? ` + <span class="tag blue">${esc(nameOf(iv.log.glasses))}</span>` : '';
       return `<button type="button" class="lrow cols-logs" data-act="log-edit" data-id="${esc(iv.log.id)}" aria-label="Edit log at ${esc(iv.log.time)}">`
         + `<span class="b">${esc(iv.log.time)}</span>`
-        + `<span class="num">${iv.error ? '<span class="lower">lower!</span>' : `+${euro(iv.delta)}`}</span>`
+        + `<span class="num stack">${iv.error ? '<span class="lower">lower!</span>' : `<span>+${euro(iv.delta)}</span>`}${each ? `<span class="xs muted">${each}</span>` : ''}</span>`
         + `<span>${esc(who) || '<span class="muted">nobody</span>'}${glasses}</span></button>`;
     }).join('')
     + '</div>';

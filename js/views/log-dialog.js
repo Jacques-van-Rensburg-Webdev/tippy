@@ -8,6 +8,7 @@ import * as store from '../store.js';
 import { day, dayRules, logsOf, nameOf } from '../data.js';
 import { ui } from '../ui-state.js';
 import { ICON, esc, win } from '../ui.js';
+import { perHead } from './today.js';
 
 const box = () => document.getElementById('dialog');
 const field = (id) => document.getElementById(id);
@@ -89,7 +90,7 @@ export function refreshPreview() {
   const barIds = cand.bar.filter((id) => id !== cand.glasses);
   const line = (label, cents) => `<div class="row between"><span>${label}</span><span>${euro(cents)}</span></div>`;
   preview.innerHTML = '<div class="info num">'
-    + `<div class="row">${ICON.info}<span class="b">+${euro(iv.delta)} € since ${esc(iv.from || 'the start')}</span></div>`
+    + `<div class="row">${ICON.info}<span class="b">+${euro(iv.delta)} € since ${esc(iv.from || 'the start')}${barIds.length ? ` · ${perHead(iv.delta, barIds.length)} each` : ''}</span></div>`
     + (cand.glasses ? line(`1. Glasses (${esc(rules.glassesPct)}%) · ${esc(nameOf(cand.glasses))}`, iv.glassesC) : '')
     + line(`${cand.glasses ? '2. ' : ''}Prep pot (${esc(rules.prepPct)}%${cand.glasses ? ' of the rest' : ''})`, iv.prepC)
     + `<div class="b preview-bar">${cand.glasses ? '3. ' : ''}Bar, ${euro(iv.barC)} ÷ ${barIds.length}</div>`

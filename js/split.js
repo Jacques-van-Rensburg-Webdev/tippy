@@ -6,10 +6,13 @@
 //   2. prep:    prepPct % of the rest to the prep pot
 //   3. bar:     the remainder, split evenly in cents between the ticked bar staff
 //               (the glasses runner is never counted as bar staff in the same log)
+// Logs run in the bar's day order (js/dates.js): 06:00 … 23:59, then after midnight 00:00 … 05:59.
 // A total lower than the one before is an error and that interval is skipped.
 // Bar money with nobody ticked is "unassigned".
 // Each person also gets beforePrep (their share before the prep cut; the glasses runner's money
 // has no prep taken from it) and prepCut (beforePrep - total). The prep cuts add up to the prep pot.
+
+import { timeOrder } from './dates.js';
 
 // Splits `cents` evenly; the first ones get the leftover cents.
 export function splitEven(cents, ids) {
@@ -23,7 +26,8 @@ export function splitEven(cents, ids) {
 }
 
 export function sortLogs(logs) {
-  return [...(logs || [])].sort((a, b) => (a.time < b.time ? -1 : a.time > b.time ? 1 : 0));
+  const order = (l) => timeOrder(l.time);
+  return [...(logs || [])].sort((a, b) => (order(a) < order(b) ? -1 : order(a) > order(b) ? 1 : 0));
 }
 
 // -> { intervals, people (sorted by when they started, each with total, beforePrep and prepCut),
@@ -90,8 +94,8 @@ export function computeDay(logs, rules) {
 
   Object.values(people).forEach((pr) => { pr.prepCut = pr.beforePrep - pr.total; });
   const list = Object.values(people).sort((a, b) => {
-    const fa = a.from || '';
-    const fb = b.from || '';
+    const fa = a.from ? timeOrder(a.from) : '';
+    const fb = b.from ? timeOrder(b.from) : '';
     return fa < fb ? -1 : fa > fb ? 1 : 0;
   });
   return { intervals, people: list, byId: people, prep, unassigned, glassesTotal, total: prev, paid: list.reduce((s, p) => s + p.total, 0) };

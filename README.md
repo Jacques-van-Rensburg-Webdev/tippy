@@ -53,7 +53,7 @@ Runs the split, money and date tests with Node's built-in test runner (no packag
 
 ## Tabs
 
-- **Today:** choose a date in the date field to enter tips for a past day (Log tips… then shows that date and asks for the time); see the LS Pay total so far, who's on shift, **Log tips…** and the day's logs (tap a log to edit or delete it).
+- **Today:** choose a date in the date field to enter tips for a past day (Log tips… then shows that date and asks for the time); see the LS Pay total so far, who's on shift, **Log tips…** and the day's logs (tap a log to edit or delete it). A day runs from 06:00 until 05:59 the next morning, so logs after midnight belong to the night they started, and opening the app before 06:00 still shows that night.
 - **Payout:** each person's amount, how it was worked out, Approve, and **Save as PDF…** (the Share sheet on a phone, a download on a computer).
 - **Week:** the week's tips and prep pot, and the Monday / Friday prep shifts with their share and approval once the week has ended.
 - **Staff:** the team (Bar, Glasses runners, No longer here), the usual prep people, tip rules and company details.

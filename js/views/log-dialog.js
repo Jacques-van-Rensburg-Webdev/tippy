@@ -3,7 +3,7 @@
 
 import { computeDay } from '../split.js';
 import { euro, parseEuro } from '../money.js';
-import { niceDate, nowTime, todayIso } from '../dates.js';
+import { afterMidnight, niceDate, nowTime, timeOrder, todayIso } from '../dates.js';
 import * as store from '../store.js';
 import { day, dayRules, logsOf, nameOf } from '../data.js';
 import { ui } from '../ui-state.js';
@@ -47,6 +47,14 @@ export function readDraft() {
   return d;
 }
 
+// The log just before `time` (leaving out the one being edited).
+const logBefore = (time) => logsOf(day(ui.date)).filter((l) => l.id !== ui.dialog.editId && timeOrder(l.time) < timeOrder(time)).pop();
+
+// The small line under the total and time.
+const hintText = (prev, time) => 'The running total from the LS Pay report.'
+  + (prev ? ` Last log: ${euro(prev.total)} € at ${prev.time}.` : '')
+  + (afterMidnight(time) ? ` After midnight, counts for ${niceDate(ui.date)}.` : '');
+
 // Ids in roster order, so the split's cent order doesn't depend on tick order.
 const barOrder = (ids) => store.roster().filter((p) => ids.includes(p.id)).map((p) => p.id);
 
@@ -77,8 +85,8 @@ export function candidate() {
 export function refreshPreview() {
   if (!ui.dialog || !field('log-preview')) return;
   const { cand, error, iv } = candidate();
-  const earlier = logsOf(day(ui.date)).filter((l) => l.id !== ui.dialog.editId && l.time < cand.time);
-  const prev = earlier[earlier.length - 1];
+  const prev = logBefore(cand.time);
+  field('log-hint').textContent = hintText(prev, cand.time);
   field('bar-legend').textContent = `Bar, ${prev ? prev.time : 'start'} – ${cand.time || '…'}`;
   field('log-save').disabled = Boolean(error);
   const preview = field('log-preview');
@@ -107,8 +115,7 @@ export function renderDialog() {
   }
   document.body.style.overflow = 'hidden';
   const d = dl.draft;
-  const logs = logsOf(day(ui.date));
-  const prev = logs.filter((l) => l.id !== dl.editId && l.time < d.time).pop();
+  const prev = logBefore(d.time);
   const roster = store.roster();
   const barPeople = roster.filter((p) => p.role === 'bar' && (p.active !== false || d.bar.includes(p.id)));
   const glassesPeople = roster.filter((p) => (p.role === 'glasses' && p.active !== false) || p.id === d.glasses);
@@ -119,7 +126,7 @@ export function renderDialog() {
   const body = '<div class="cols-log">'
     + `<label class="lab"><span>LS Pay tips so far (€)</span><input class="input money" id="log-total" inputmode="decimal" autocomplete="off" placeholder="${prev ? esc(euro(prev.total)) : '0,00'}" value="${esc(d.total)}"></label>`
     + `<label class="lab"><span>Time</span><input class="input time" id="log-time" type="time" value="${esc(d.time)}"></label></div>`
-    + `<span class="xs muted">The running total from the LS Pay report.${prev ? ` Last log: ${euro(prev.total)} € at ${esc(prev.time)}.` : ''}</span>`
+    + `<span class="xs muted" id="log-hint">${esc(hintText(prev, d.time))}</span>`
     + `<fieldset class="group"><legend id="bar-legend">Bar, ${esc(prev ? prev.time : 'start')} – ${esc(d.time || '…')}</legend><div class="grid2">`
     + (barPeople.length ? barPeople.map(check).join('') : '<span class="small muted full">No bar staff yet.</span>')
     + '</div></fieldset>'

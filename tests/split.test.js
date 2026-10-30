@@ -4,7 +4,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { computeDay, computeWeekPrep, splitEven, sortLogs } from '../js/split.js';
 import { euro, parseEuro } from '../js/money.js';
-import { isoWeek, mondayOf, addDays } from '../js/dates.js';
+import { isoWeek, mondayOf, addDays, afterMidnight, barDay } from '../js/dates.js';
 
 const RULES = { glassesPct: 10, prepPct: 5 };
 const log = (time, total, bar, glasses = null, id = time) => ({ id, time, total, bar, glasses });
@@ -52,6 +52,26 @@ test('before prep: the prep cuts add up to the prep pot, cent for cent', () => {
   const r = computeDay([log('20:00', 10001, ['a', 'b'], 'g'), log('22:00', 13001, ['a', 'b', 'c'])], RULES);
   assert.equal(r.people.reduce((s, p) => s + p.prepCut, 0), r.prep);
   r.people.forEach((p) => assert.equal(p.beforePrep - p.prepCut, p.total));
+});
+
+test('past midnight: logs after 00:00 come after the evening ones', () => {
+  const r = computeDay([log('00:30', 15000, ['a']), log('22:00', 10000, ['a', 'b']), log('18:00', 4000, ['a'])], RULES);
+  assert.deepEqual(r.intervals.map((i) => i.log.time), ['18:00', '22:00', '00:30']);
+  assert.ok(r.intervals.every((i) => !i.error));
+  assert.deepEqual([r.byId.a.from, r.byId.a.to], [null, '00:30']);
+  assert.deepEqual([r.byId.b.from, r.byId.b.to], ['18:00', '22:00']);
+  assert.equal(r.total, 15000);
+  assert.deepEqual(sortLogs([log('05:59', 1, []), log('06:00', 2, []), log('23:59', 3, [])]).map((l) => l.time), ['06:00', '23:59', '05:59']);
+});
+
+test('the bar\'s day starts at 06:00', () => {
+  assert.equal(afterMidnight('05:59'), true);
+  assert.equal(afterMidnight('06:00'), false);
+  assert.equal(afterMidnight(''), false);
+  assert.equal(barDay(new Date(2026, 9, 31, 0, 30)), '2026-10-30');
+  assert.equal(barDay(new Date(2026, 9, 31, 5, 59)), '2026-10-30');
+  assert.equal(barDay(new Date(2026, 9, 31, 6, 0)), '2026-10-31');
+  assert.equal(barDay(new Date(2026, 10, 1, 1, 0)), '2026-10-31', 'across a month end');
 });
 
 test('a glasses runner ticked as bar too is only counted as glasses', () => {

@@ -3,7 +3,7 @@
 
 import { computeDay } from '../split.js';
 import { euro, parseEuro } from '../money.js';
-import { nowTime } from '../dates.js';
+import { niceDate, nowTime, todayIso } from '../dates.js';
 import * as store from '../store.js';
 import { day, dayRules, logsOf, nameOf } from '../data.js';
 import { ui } from '../ui-state.js';
@@ -20,9 +20,10 @@ export function openLog(editId) {
     if (!l) return;
     draft = { total: euro(l.total), time: l.time, bar: [...(l.bar || [])], glasses: l.glasses || '' };
   } else {
-    // A new log starts with the people from the last one.
+    // A new log starts with the people from the last one. On another day the time is typed in,
+    // so a past log isn't saved at today's clock time.
     const last = logs[logs.length - 1];
-    draft = { total: '', time: nowTime(), bar: last ? [...(last.bar || [])] : [], glasses: last ? last.glasses || '' : '' };
+    draft = { total: '', time: ui.date === todayIso() ? nowTime() : '', bar: last ? [...(last.bar || [])] : [], glasses: last ? last.glasses || '' : '' };
   }
   ui.dialog = { editId: editId || null, draft };
   ui.confirmDelete = false;
@@ -112,7 +113,7 @@ export function renderDialog() {
   const glassesPeople = roster.filter((p) => (p.role === 'glasses' && p.active !== false) || p.id === d.glasses);
   const check = (p) => `<label class="opt"><input type="checkbox" class="ck" name="bar" value="${esc(p.id)}"${d.bar.includes(p.id) ? ' checked' : ''}><span${d.bar.includes(p.id) ? ' class="b"' : ''}>${esc(p.name)}</span></label>`;
   const radio = (id, label) => `<label class="opt"><input type="radio" class="ck radio" name="glasses" value="${esc(id)}"${d.glasses === id ? ' checked' : ''}><span>${esc(label)}</span></label>`;
-  const title = dl.editId ? 'Edit log' : 'Log tips';
+  const title = (dl.editId ? 'Edit log' : 'Log tips') + (ui.date === todayIso() ? '' : ` — ${niceDate(ui.date)}`);
 
   const body = '<div class="cols-log">'
     + `<label class="lab"><span>LS Pay tips so far (€)</span><input class="input money" id="log-total" inputmode="decimal" autocomplete="off" placeholder="${prev ? esc(euro(prev.total)) : '0,00'}" value="${esc(d.total)}"></label>`

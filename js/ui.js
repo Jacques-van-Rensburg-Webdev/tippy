@@ -2,7 +2,7 @@
 // Buttons carry data-act (handled in js/actions.js).
 
 import { esc } from './esc.js';
-import { niceDate, todayIso } from './dates.js';
+import { todayIso } from './dates.js';
 
 export { esc };
 
@@ -34,7 +34,7 @@ export function dateNav(date) {
   const isToday = date === todayIso();
   return '<div class="row">'
     + '<button type="button" class="btn sm" data-act="day" data-n="-1" aria-label="Previous day">‹</button>'
-    + `<span class="grow b center">${esc(niceDate(date))}${isToday ? ' · today' : ''}</span>`
+    + `<input class="input date-picker grow" type="date" data-act="date-select" value="${esc(date)}" aria-label="Choose date">`
     + '<button type="button" class="btn sm" data-act="day" data-n="1" aria-label="Next day">›</button>'
     + (isToday ? '' : '<button type="button" class="btn sm" data-act="day-today">Today</button>')
     + '</div>';

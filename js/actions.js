@@ -91,6 +91,7 @@ const ACTIONS = {
 
 // Selects: a week's prep person, the usual prep people.
 const CHANGES = {
+  'date-select': (el) => { if (el.value) showDay(el.value); },
   'week-prep': (el) => { saveWeek(ui.weekMon, { [el.dataset.key]: el.value || null }); showToast('Prep shift updated for this week.'); },
   'prep-default': (el) => { store.set('settings/main', { ...store.settings(), [el.dataset.key]: el.value || null }); showToast('Usual prep person saved.'); },
 };

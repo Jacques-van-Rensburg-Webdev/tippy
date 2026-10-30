@@ -10,6 +10,9 @@
 .wrap { flex-wrap: wrap; }
 .end { justify-content: flex-end; }
 .full { grid-column: 1 / -1; }
+/* Date field: without iPhone Safari's own style it keeps its size; value centred like the old label */
+.date-picker { padding-inline: var(--gap-4); -webkit-appearance: none; appearance: none; line-height: calc(var(--input-height) - var(--bevel) * 2); text-align: center; }
+.date-picker::-webkit-date-and-time-value { margin: 0; text-align: center; line-height: calc(var(--input-height) - var(--bevel) * 2); }
 
 /* ---------- List columns ---------- */
 .cols-logs { grid-template-columns: var(--col-time) var(--col-added) minmax(0, 1fr); }

@@ -89,7 +89,7 @@ const ACTIONS = {
   ...STAFF_ACTIONS,
 };
 
-// Selects: a week's prep person, the usual prep people.
+// Fields that change on their own: the date, a week's prep person, the usual prep people.
 const CHANGES = {
   'date-select': (el) => { if (el.value) showDay(el.value); },
   'week-prep': (el) => { saveWeek(ui.weekMon, { [el.dataset.key]: el.value || null }); showToast('Prep shift updated for this week.'); },

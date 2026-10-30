@@ -1,10 +1,10 @@
 /* Design tokens. Every value used in the CSS files comes from here.
    Tippy matches its reference design (docs/design/trinkgeld-split.html) exactly, so its sizes,
    spacing and text sizes are the reference's own; they were agreed in task/todo.md (decision 3).
-   The starter kit's grid tokens stay for the grid overlay. */
+   The starter kit's frame, zone and spacing tokens stay as the grid reference (design-grid-rules.md). */
 
 :root {
-  /* Frame and grid (starter kit; used by the grid overlay) */
+  /* Frame and grid (starter kit; the columns, margin and gutter are used by the grid overlay) */
   --frame-width: 390px;
   --frame-height: 844px;
   --grid-columns: 4;
@@ -40,7 +40,6 @@
   --gap-12: 12px;
   --gap-14: 14px;
   --gap-16: 16px;
-  --gap-20: 20px;
   --gap-17: 17px;
 
   /* Layout */
@@ -66,7 +65,6 @@
   --radio-dot: 8px;
   --mini-check: 18px;
   --tree-box: 18px;
-  --tree-indent: 17px;
   --option-height: 44px;
   --person-height: 48px;
   --node-height: 44px;
@@ -78,7 +76,6 @@
   --progress-stripe: 11px;
   --progress-step: 14px;
   --icon: 16px;
-  --icon-large: 20px;
   --dither: 2px;
 
   /* List columns (the reference's grid widths) */
@@ -140,9 +137,7 @@
   --err-bg: #F9D9D6;
   --tab-dither: #F4ECE1;
 
-  /* Starter kit colour names (grid overlay) mapped onto the palette */
-  --color-bg: var(--face);
-  --color-text: var(--ink);
+  /* Grid overlay colours */
   --overlay-column: rgba(216, 90, 48, 0.12);
   --overlay-line: rgba(216, 90, 48, 0.5);
   --overlay-text: #993c1d;

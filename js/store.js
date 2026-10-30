@@ -3,14 +3,13 @@
 //   'settings/staff'  { list: [{ id, name, role: 'bar' | 'glasses', active }] }
 //   'days/<date>'     { date, logs: [...], approvals: { id: { at, cents } }, rules: { glassesPct, prepPct } }
 //   'weeks/<monday>'  { mon, fri, approvals }
-// Screens read through the getters and write with set(); every write notifies the listeners.
+// Screens read through the getters and write with set().
 
 const KEY = 'tippy';
 
 export const DEFAULT_SETTINGS = { company: { name: '', street: '', postcode: '', city: '' }, glassesPct: 10, prepPct: 5, prepMon: null, prepFri: null };
 
 let data = null;
-const listeners = new Set();
 const clone = (o) => JSON.parse(JSON.stringify(o));
 
 function load() {
@@ -36,10 +35,7 @@ export function set(path, value) {
   } catch {
     // Storage full or blocked: the change lasts for this visit only.
   }
-  listeners.forEach((fn) => fn(path));
 }
-
-export const subscribe = (fn) => { listeners.add(fn); return () => listeners.delete(fn); };
 
 // Days from..to (inclusive), as saved.
 export function daysBetween(from, to) {
@@ -56,8 +52,3 @@ export function settings() {
 }
 
 export const roster = () => (get('settings/staff') || {}).list || [];
-
-// For tests: forget what's loaded.
-export function reset(value = {}) {
-  data = clone(value);
-}

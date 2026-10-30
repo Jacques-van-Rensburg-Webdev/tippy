@@ -64,7 +64,6 @@
 .b { font-weight: var(--weight-bold); }
 .right { text-align: right; }
 .center { text-align: center; }
-.sync-shared { color: var(--green-ink); }
 .sync-local { color: var(--warn); }
 
 /* ---------- Sunken fields and the display ---------- */
@@ -149,10 +148,9 @@
   font-size: var(--text-field);
 }
 /* Time field: without iPhone Safari's own style it shrinks to its column; value centred vertically */
-.input.time { -webkit-appearance: none; appearance: none; line-height: calc(var(--input-big) - var(--bevel) * 2); }
+.input.time { -webkit-appearance: none; appearance: none; height: var(--input-big); line-height: calc(var(--input-big) - var(--bevel) * 2); color: var(--desk); font-size: var(--text-18); font-weight: var(--weight-bold); }
 .input.time::-webkit-date-and-time-value { margin: 0; text-align: left; line-height: calc(var(--input-big) - var(--bevel) * 2); }
 .input.money { height: var(--input-big); color: var(--red); font-size: var(--text-24); font-weight: var(--weight-bold); text-align: right; font-variant-numeric: tabular-nums; }
-.input.time { height: var(--input-big); color: var(--desk); font-size: var(--text-18); font-weight: var(--weight-bold); }
 select.input { padding: 0 var(--gap-6); }
 .lab { display: flex; flex-direction: column; gap: var(--gap-4); min-width: 0; }
 

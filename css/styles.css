@@ -21,15 +21,6 @@ button, input, select { font: inherit; color: inherit; }
 p, h1, h2, h3 { margin: 0; }
 img, svg { display: block; }
 
-.visually-hidden {
-  position: absolute !important;
-  width: var(--line);
-  height: var(--line);
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-
 /* ---------- Shell ---------- */
 .app-header { height: var(--safe-top); }
 

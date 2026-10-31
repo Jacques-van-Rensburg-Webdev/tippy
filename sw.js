@@ -36,6 +36,8 @@ const APP_FILES = [
   'js/pdf/payout-pdf.js',
   'js/pdf/pdf-writer.js',
   'js/pdf/share.js',
+  'js/pdf/week-layout.js',
+  'js/pdf/week-pdf.js',
   'js/views/log-dialog.js',
   'js/views/payout.js',
   'js/views/staff.js',

@@ -2,7 +2,7 @@
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { computeDay, computeWeekPrep, splitEven, sortLogs } from '../js/split.js';
+import { computeDay, computeWeekPeople, computeWeekPrep, splitEven, sortLogs } from '../js/split.js';
 import { euro, parseEuro } from '../js/money.js';
 import { isoWeek, mondayOf, addDays, afterMidnight, barDay } from '../js/dates.js';
 
@@ -118,6 +118,29 @@ test('week prep: the pot split between Monday and Friday; one person on both get
   assert.deepEqual(computeWeekPrep(101, 'a', 'a'), { a: 101 });
   assert.deepEqual(computeWeekPrep(101, 'a', null), { a: 101 });
   assert.deepEqual(computeWeekPrep(101, null, null), {});
+});
+
+test('week people: days and prep add up to each total; every cent of the week is accounted for', () => {
+  const mon = computeDay([log('20:00', 10001, ['a', 'b'], 'g')], RULES);
+  const tue = computeDay([log('20:00', 5000, ['g'], 'a'), log('22:00', 7000, [])], RULES);
+  const empty = null;
+  const days = [mon, tue, empty, empty, empty, empty, empty].map((r) => ({ r, approvals: {} }));
+  days[0].approvals = { a: { cents: mon.byId.a.total }, b: { cents: 1 } };
+  const pot = mon.prep + tue.prep;
+  const w = computeWeekPeople(days, computeWeekPrep(pot, 'a', 'p'));
+  const by = Object.fromEntries(w.people.map((p) => [p.id, p]));
+
+  assert.deepEqual(w.people.map((p) => p.id), ['a', 'b', 'g', 'p'], 'first appearance, prep-only last');
+  assert.deepEqual(by.a.days, [mon.byId.a.total, tue.byId.a.total, null, null, null, null, null], 'bar one day, glasses the next');
+  assert.equal(by.g.days[1], tue.byId.g.total);
+  for (const p of w.people) assert.equal(p.total, p.days.reduce((s, c) => s + (c || 0), 0) + p.prep);
+  assert.equal(by.p.total, by.p.prep, 'prep-only person');
+  assert.equal(by.a.prep + by.p.prep, pot);
+  assert.deepEqual([by.a.worked, by.a.approved, by.b.worked, by.b.approved], [2, 1, 1, 0], 'approved only when the amount matches');
+  assert.equal(w.tips, 10001 + 7000);
+  assert.ok(w.unassigned > 0);
+  assert.equal(w.paid + w.prep + w.unassigned, w.tips);
+  assert.equal(w.people.reduce((s, p) => s + p.total, 0) + w.unassigned, w.tips);
 });
 
 test('money: German format and typed amounts', () => {

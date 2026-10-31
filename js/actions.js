@@ -10,6 +10,7 @@ import { showToast } from './ui.js';
 import { candidate, closeLog, openLog, readDraft, refreshPreview, renderDialog } from './views/log-dialog.js';
 import { weekTotals } from './views/week.js';
 import { makePayoutPdf } from './pdf/payout-pdf.js';
+import { makeWeekPdf } from './pdf/week-pdf.js';
 import { STAFF_ACTIONS } from './staff-actions.js';
 
 const ACTIONS = {
@@ -85,6 +86,7 @@ const ACTIONS = {
     });
     showToast('Prep approved.');
   },
+  'week-pdf': () => makeWeekPdf(),
 
   ...STAFF_ACTIONS,
 };

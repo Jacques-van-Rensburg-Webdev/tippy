@@ -110,3 +110,37 @@ export function computeWeekPrep(pot, monId, friId) {
   shifts.forEach((id, i) => { out[id] = (out[id] || 0) + share[`s${i}`]; });
   return out;
 }
+
+// Everyone's week. days: the 7 days Mon–Sun, each { r: computeDay result or null, approvals };
+// prepShares: computeWeekPrep's result.
+// -> { people (in the order they first appear; prep-only people last), each with
+//      days (7 amounts, null where they didn't work), prep, total, worked, approved (days whose
+//      approval matches the amount); tips, paid, prep (the pot), unassigned }
+export function computeWeekPeople(days, prepShares) {
+  const people = {};
+  const person = (id) => (people[id] = people[id] || { id, days: days.map(() => null), prep: 0, total: 0, worked: 0, approved: 0 });
+  let tips = 0;
+  let paid = 0;
+  let prep = 0;
+  let unassigned = 0;
+  days.forEach(({ r, approvals = {} }, i) => {
+    if (!r) return;
+    tips += r.total;
+    paid += r.paid;
+    prep += r.prep;
+    unassigned += r.unassigned;
+    r.people.forEach((p) => {
+      const pr = person(p.id);
+      pr.days[i] = p.total;
+      pr.total += p.total;
+      pr.worked += 1;
+      if (approvals[p.id] && approvals[p.id].cents === p.total) pr.approved += 1;
+    });
+  });
+  Object.entries(prepShares).forEach(([id, cents]) => {
+    const pr = person(id);
+    pr.prep += cents;
+    pr.total += cents;
+  });
+  return { people: Object.values(people), tips, paid, prep, unassigned };
+}

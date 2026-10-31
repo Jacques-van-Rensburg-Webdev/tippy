@@ -21,7 +21,7 @@ export function weekTotals(monday) {
     const d = byDate[date];
     const r = d ? computeDay(d.logs, dayRules(d)) : null;
     if (r) { tips += r.total; pot += r.prep; }
-    return { date, r, isPrepDay: i === 0 || i === 4 };
+    return { date, r, approvals: (d && d.approvals) || {}, isPrepDay: i === 0 || i === 4 };
   });
   return { days, tips, pot };
 }
@@ -76,6 +76,9 @@ export function viewWeek() {
     + '<fieldset class="group"><legend>Prep shifts this week</legend>'
     + shiftRow('mon', 'Monday', mon, monId)
     + shiftRow('fri', 'Friday', addDays(mon, 4), friId)
-    + `<span class="xs muted block prep-note">The pot is shared equally between the prep shifts. ${ended ? 'The week is finished, so prep can be approved.' : 'Amounts so far. Approve after Sunday’s last log.'}</span></fieldset>`;
+    + `<span class="xs muted block prep-note">The pot is shared equally between the prep shifts. ${ended ? 'The week is finished, so prep can be approved.' : 'Amounts so far. Approve after Sunday’s last log.'}</span></fieldset>`
+    + (days.some((d) => d.r)
+      ? `<button type="button" class="btn primary big" data-act="week-pdf">${ICON.pdf}Save week as PDF…</button>`
+      : `<button type="button" class="btn primary big" disabled>${ICON.pdf}Save week as PDF…</button><span class="xs muted">No tips logged this week yet.</span>`);
   return win(`Week ${isoWeek(mon)} — Prep pot`, body, { icon: ICON.cal });
 }
